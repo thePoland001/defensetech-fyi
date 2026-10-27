@@ -1,0 +1,64 @@
+# defensetech.fyi
+
+Anonymous salaries, clearance requirements and intern clearance sponsorship for the defense companies of Huntsville, Alabama. Think levels.fyi, but for the Rocket City.
+
+- **~300 companies** with a Huntsville address (33 large / primes, 55 mid-size, 214 small), compiled from the Huntsville/Madison County Chamber directory, the Cummings Research Park tenant directory and local business news.
+- **Give-to-get:** company profiles and clearance stats are public. Individual salaries and pay medians unlock after a visitor submits one salary. The server enforces this with a signed, httpOnly cookie, so locked visitors never receive pay data.
+- **Defense-specific fields:** required clearance level, whether the company sponsored it, intern clearance sponsorship, 9/80 schedules, Redstone Arsenal vs. Research Park.
+- **Baseline estimates** pre-populate the large employers (Lockheed, Northrop, Boeing, RTX, Leidos/Dynetics, L3Harris, Palantir, Anduril…). They're always labeled "Estimate" in the UI and can be filtered out.
+
+## Stack
+
+- **API:** Node 20+, Express, Postgres (`pg`). With no `DATABASE_URL` it falls back to embedded [PGlite](https://pglite.dev) on disk, so local dev needs zero setup.
+- **Web:** React 18 + React Router, built with Vite and served by the same Express process.
+
+## Run locally
+
+```bash
+npm install
+npm run dev      # API on :3001, Vite on :5173 (proxies /api)
+```
+
+Or production-style:
+
+```bash
+npm run build && npm start   # http://localhost:3001
+```
+
+## Deploy to Render
+
+The repo includes a `render.yaml` Blueprint.
+
+1. In Render, choose **New → Blueprint** and select this repo.
+2. Render creates the web service and a Postgres database, generates `SESSION_SECRET`, and wires up `DATABASE_URL`.
+3. On first boot the server creates tables, loads the company directory and seeds the baseline estimates.
+
+> Render's **free** Postgres expires 30 days after creation. Upgrade the database to a paid plan before then, or point `DATABASE_URL` at any other Postgres (Neon, Supabase…) to keep submissions.
+
+### Environment variables
+
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | Postgres connection string. If unset, uses embedded PGlite in `./.data` (not persistent on Render). |
+| `SESSION_SECRET` | Signs unlock cookies and salts IP hashes. Required in production. |
+| `DATABASE_SSL` | Optional `true`/`false` override. By default SSL is used for external hostnames. |
+| `PORT` | Set by Render. Defaults to 3001. |
+
+## Project layout
+
+```
+server/
+  index.js            Express API + static hosting
+  db.js               Postgres/PGlite, migrations, seeding
+  token.js            Signed unlock cookie
+  data/companies.js   Huntsville company directory
+  data/estimates.js   Baseline estimate generator for large companies
+shared/options.js     Job families, levels, clearance options (used by API + UI)
+client/               React app (Vite root)
+```
+
+## Editing data
+
+- **Add or fix a company:** edit `server/data/companies.js`. Rows are upserted by slug on every boot.
+- **Change estimates:** edit `server/data/estimates.js` and bump `ESTIMATES_VERSION`. Old estimates are replaced on the next boot, and user submissions are never touched.
+- **Remove a bad submission:** `DELETE FROM salaries WHERE id = …;` in the Render Postgres shell.
