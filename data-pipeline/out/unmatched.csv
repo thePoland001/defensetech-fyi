@@ -1,0 +1,17 @@
+job_id,query,title,company,location,posted,job_type,compensation,source
+JOBSEARCH_100001,systems engineer,"Systems Engineer - Huntsville, Alabama",In-Depth Engineering Corporation,"Huntsville, AL",2026-09-22,Full-time,"$90,000 - $108,000 a year",indeed_posting
+JOBSEARCH_100069,software engineer,Junior Software Developer - TS/CI Poly,Blackwatch International Corporation,"Huntsville, AL",2026-10-08,Full-time,"$75,904.37 - $111,398.01 a year",indeed_posting
+JOBSEARCH_100070,software engineer,"Automated Software Test Engineer - Huntsville, Alabama",In-Depth Engineering Corporation,"Huntsville, AL",2026-06-24,Full-time,"$80,000 - $125,000 a year",indeed_posting
+JOBSEARCH_100077,software engineer,Jr. Software Engineer,Teledyne FLIR,"Huntsville, AL",2026-08-10,Full-time,"$70,393.34 - $98,627.77 a year",indeed_posting
+JOBSEARCH_100078,software engineer,Unity Game Developer (T7A),Akima,"Huntsville, AL",2026-10-27,N/A,"$79,982.30 - $114,436.48 a year",indeed_posting
+JOBSEARCH_100024,mechanical engineer,Mechanical Engineer I,Orbital Robotics,"Huntsville, AL",2026-10-08,Full-time,"$75,000 - $125,000 a year",indeed_posting
+JOBSEARCH_100050,electrical engineer,RF Systems and Simulation Engineer (Radar),"Signature Solutions, Inc.","Huntsville, AL",2026-10-12,Full-time,"$90,000 - $150,000 a year",indeed_posting
+JOBSEARCH_100037,program manager defense,Configuration Management Specialist,General Atomics,"Huntsville, AL",2026-10-27,Full-time,"$63,000 - $105,375 a year",indeed_posting
+JOBSEARCH_100038,program manager defense,Program/Data Analyst,"ASCI Federal Services, LLC","Huntsville, AL",2026-10-16,Full-time,"$80,000 - $90,000 a year",indeed_posting
+JOBSEARCH_100039,program manager defense,Business Analyst,BTAS,"Huntsville, AL",2026-04-05,Full-time,"$60,932.70 - $91,800.34 a year",indeed_posting
+JOBSEARCH_100062,cyber security engineer clearance,SOC Analyst I,Deloitte,"Huntsville, AL",2026-09-17,Full-time,"$51,614.98 - $76,462.57 a year",indeed_posting
+JOBSEARCH_100063,cyber security engineer clearance,Cybersecurity Engineer,Dark Wolf Solutions,"Huntsville, AL",2026-08-28,N/A,"$120,000 - $150,000 a year",indeed_posting
+JOBSEARCH_100067,cyber security engineer clearance,Senior Security Engineer,Full Visbility,"Huntsville, AL",2026-10-26,Full-time,"$140,000 - $190,000 a year",indeed_posting
+JOBSEARCH_100017,aerospace engineer,Stowage Engineer,Teledyne FLIR,"Huntsville, AL",2026-10-27,Full-time,"$71,688.62 - $98,994.25 a year",indeed_posting
+JOBSEARCH_100054,test engineer missile,"Electrical Engineer – Missile Test, Telemetry & Instrumentation",secotec,"Huntsville, AL",2026-10-01,Full-time,"$70,000 - $120,000 a year",indeed_posting
+JOBSEARCH_100057,test engineer missile,Telemetry Engineer- Missile Defense,CREATED SOLUTIONS INC,"Redstone Arsenal, AL",2026-10-04,Full-time,"$71,094.04 - $130,830.21 a year",indeed_posting

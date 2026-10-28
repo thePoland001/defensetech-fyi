@@ -4,6 +4,7 @@ import { LEVELS } from '../../../shared/options.js';
 import { useApi, useApp, useUnlock } from '../api.jsx';
 import { Bar, Blur, ClearanceBadge, CompanyLogo, Empty, Locked, SizeBadge, Spinner } from '../components/Bits.jsx';
 import { ArrowLeft, ArrowRight, ExternalIcon, InfoIcon, PinIcon, PlusIcon } from '../components/Icons.jsx';
+import PostedRanges from '../components/PostedRanges.jsx';
 import SalaryTable, { FakeSalaryRows } from '../components/SalaryTable.jsx';
 import { fakeMoney, hourly, money, pct, plural } from '../format.js';
 import NotFound from './NotFound.jsx';
@@ -24,7 +25,7 @@ export default function Company() {
   if (loading && !data) return <div className="container page"><Spinner /></div>;
   if (!data) return <div className="container page"><Empty title="Couldn't load this company">{error?.message}</Empty></div>;
 
-  const { company, counts, roles, clearance, sponsorship, internship } = data;
+  const { company, counts, roles, clearance, sponsorship, internship, postings } = data;
   const ftClearanceTotal = clearance.reduce((s, r) => s + r.n, 0);
   const cleared = clearance.filter((r) => r.level !== 'None').reduce((s, r) => s + r.n, 0);
   const sponsorTotal = sponsorship.reduce((s, r) => s + r.n, 0);
@@ -68,7 +69,9 @@ export default function Company() {
           <p>Be the first to share what {company.name} pays. It's anonymous, takes about a minute, and unlocks every other salary on the site.</p>
           <Link to={`/add-salary?company=${company.slug}`} className="btn btn-primary"><PlusIcon size={16} /> Add the first salary</Link>
         </div>
-      ) : (
+      ) : null}
+      {noData && <PostedRanges postings={postings} companyName={company.name} />}
+      {!noData && (
         <>
           <div className="stat-grid">
             <div className="stat">
@@ -132,6 +135,8 @@ export default function Company() {
               )}
             </section>
           )}
+
+          <PostedRanges postings={postings} companyName={company.name} />
 
           <div className="grid-2">
             <section className="card">

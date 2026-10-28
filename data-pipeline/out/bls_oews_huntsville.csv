@@ -1,0 +1,35 @@
+occ_code,occ_title,area,year,annual_p10,annual_p25,annual_median,annual_p75,annual_p90,employment,annual_mean
+11-3021,Computer and Information Systems Managers,"Huntsville, AL MSA",2025,99680,128520,164060,199610,219550,2250,160210
+11-9041,Architectural and Engineering Managers,"Huntsville, AL MSA",2025,111780,136990,168380,206110,232010,1630,171860
+11-9199,"Managers, All Other","Huntsville, AL MSA",2025,120720,138320,153920,176160,212290,570,159490
+13-1041,Compliance Officers,"Huntsville, AL MSA",2025,49550,64140,84990,116420,142670,450,92790
+13-1081,Logisticians,"Huntsville, AL MSA",2025,72310,95370,117060,135620,151240,2780,114710
+13-1082,Project Management Specialists,"Huntsville, AL MSA",2025,75800,87430,112130,137400,178050,850,121640
+13-1111,Management Analysts,"Huntsville, AL MSA",2025,79890,98450,121970,142670,168810,1710,122850
+13-1199,"Business Operations Specialists, All Other","Huntsville, AL MSA",2025,77000,98450,124950,146120,183040,3100,126540
+13-2011,Accountants and Auditors,"Huntsville, AL MSA",2025,53920,63780,79220,103240,134360,3010,88300
+13-2051,Financial and Investment Analysts,"Huntsville, AL MSA",2025,66350,79170,99400,132180,163720,620,107810
+15-1211,Computer Systems Analysts,"Huntsville, AL MSA",2025,71760,84470,107350,137860,170650,2610,119250
+15-1212,Information Security Analysts,"Huntsville, AL MSA",2025,75940,98210,130330,157280,176510,1840,125400
+15-1221,Computer and Information Research Scientists,"Huntsville, AL MSA",2025,63290,80600,122200,150200,183160,,126870
+15-1241,Computer Network Architects,"Huntsville, AL MSA",2025,77900,102350,132410,165600,204150,1660,134530
+15-1244,Network and Computer Systems Administrators,"Huntsville, AL MSA",2025,61600,78080,100120,128080,157700,1160,103190
+15-1252,Software Developers,"Huntsville, AL MSA",2025,79630,100320,128080,162260,175460,7030,127280
+15-1253,Software Quality Assurance Analysts and Testers,"Huntsville, AL MSA",2025,76690,90020,105610,134280,167290,850,116140
+15-1299,"Computer Occupations, All Other","Huntsville, AL MSA",2025,58200,92390,120450,142670,168580,890,117930
+15-2031,Operations Research Analysts,"Huntsville, AL MSA",2025,78170,100090,132000,161160,188140,350,130920
+15-2051,Data Scientists,"Huntsville, AL MSA",2025,66860,84990,111810,137230,174700,620,115800
+17-2011,Aerospace Engineers,"Huntsville, AL MSA",2025,78890,100070,131090,167050,195190,4880,135660
+17-2041,Chemical Engineers,"Huntsville, AL MSA",2025,75180,80720,101480,131680,150180,60,108850
+17-2051,Civil Engineers,"Huntsville, AL MSA",2025,76110,83210,105760,152490,207990,1010,121840
+17-2061,Computer Hardware Engineers,"Huntsville, AL MSA",2025,83820,111530,142670,165860,195190,560,140060
+17-2071,Electrical Engineers,"Huntsville, AL MSA",2025,85420,103040,130330,170440,208130,2190,137860
+17-2072,"Electronics Engineers, Except Computer","Huntsville, AL MSA",2025,81970,100780,133330,163630,195190,890,136760
+17-2112,Industrial Engineers,"Huntsville, AL MSA",2025,79390,86100,106110,131140,168660,1820,115380
+17-2131,Materials Engineers,"Huntsville, AL MSA",2025,81430,100640,120720,151300,177720,280,126860
+17-2141,Mechanical Engineers,"Huntsville, AL MSA",2025,79940,87210,102450,132570,167510,2150,115110
+17-2199,"Engineers, All Other","Huntsville, AL MSA",2025,93890,123160,155630,188140,195190,3110,150490
+17-3021,Aerospace Engineering and Operations Technologists and Technicians,"Huntsville, AL MSA",2025,43620,45360,62130,82150,92210,80,66340
+17-3023,Electrical and Electronic Engineering Technologists and Technicians,"Huntsville, AL MSA",2025,43730,51240,68690,86630,105130,650,72750
+17-3027,Mechanical Engineering Technologists and Technicians,"Huntsville, AL MSA",2025,48600,51830,60280,75310,75310,150,63810
+19-2012,Physicists,"Huntsville, AL MSA",2025,82230,110240,149990,195190,227820,180,155940

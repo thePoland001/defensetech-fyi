@@ -463,3 +463,43 @@ a.tag:hover { border-color: var(--primary); color: var(--primary); text-decorati
   .stat-grid { grid-template-columns: 1fr; }
   .header-actions .btn span { display: none; }
 }
+
+/* ---------- posted ranges + market benchmark ---------- */
+.posting-families { margin: -4px 0 12px; }
+.posting-table .c-tc { min-width: 190px; }
+.range-bar { position: relative; display: block; height: 6px; margin-top: 8px; border-radius: 3px; background: var(--surface-2); }
+.range-fill { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--primary); opacity: 0.75; }
+.row-badges .link { color: var(--primary); }
+.row-badges .link svg { vertical-align: -1px; }
+
+.benchmark-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 28px; }
+.benchmark-grid > div:only-child { grid-column: 1 / -1; }
+.bench-occ { padding: 10px 0 14px; border-bottom: 1px solid var(--border); }
+.bench-occ:last-child { border-bottom: 0; }
+.bench-occ-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 10px; }
+.bench-occ-head .sub { display: inline; }
+.spread { position: relative; display: block; height: 18px; margin: 0 4px 8px; }
+.spread-whisker { position: absolute; top: 8px; height: 2px; background: var(--border-strong); }
+.spread-box { position: absolute; top: 2px; height: 14px; border-radius: 4px; background: var(--primary-soft); border: 1px solid #b7d2ef; }
+.spread-median { position: absolute; top: 0; width: 3px; height: 18px; margin-left: -1.5px; border-radius: 2px; background: var(--primary); }
+.bench-pcts { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.bench-pcts > div { display: flex; flex-direction: column; }
+.bench-pcts strong { font-size: 15px; font-weight: 800; }
+.bench-pcts .hl strong { color: var(--primary); }
+.bench-posted { display: flex; flex-direction: column; }
+.bench-posted-row { display: grid; grid-template-columns: 1fr auto 32px; gap: 10px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; font-weight: 600; }
+.bench-posted-row:last-child { border-bottom: 0; }
+.bench-posted-row strong { font-weight: 800; }
+.bench-posted-row .sub { text-align: right; }
+.bench-posted-row.total strong { color: var(--primary); }
+
+@media (max-width: 760px) {
+  .benchmark-grid { grid-template-columns: 1fr; gap: 12px; }
+  .bench-pcts strong { font-size: 13.5px; }
+}
+@media (max-width: 640px) {
+  .posting-table .c-tc { min-width: 0; text-align: right; }
+  .posting-table .c-clear { grid-row: 3; }
+  .posting-table .c-clear:has(.muted) { display: none; }
+}
+.show-more { display: block; margin: 10px auto 0; }

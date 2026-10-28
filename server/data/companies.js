@@ -113,6 +113,7 @@ export const COMPANY_ROWS = [
   ['Draper', 'M', 'RD MD', 'CRP', 0, 'Nonprofit engineering lab working on guidance, navigation and control, with a Huntsville office.', 'draper.com'],
   ['The Aerospace Corporation', 'M', 'SP RD', 'CRP', 0, 'Federally funded research and development center for space, with a Huntsville presence.', 'aerospace.org'],
   ['Battelle', 'M', 'RD ES', 'CRP', 0, 'Nonprofit science and technology organization with a Huntsville office on Old Madison Pike.', 'battelle.org'],
+  ['MITRE', 'M', 'ES RD CY', 'CRP', 0, 'Not-for-profit operator of federally funded R&D centers, with a Huntsville site supporting Army and missile defense programs.', 'mitre.org'],
   ['Noblis', 'M', 'ES SW', 'CRP', 0, 'Nonprofit science and technology organization with a Huntsville office on Discovery Drive.', 'noblis.org'],
   ['LMI', 'M', 'LG ES', 'CRP', 0, 'Consultancy focused on logistics, sustainment and government management.', 'lmi.org'],
   ['SMX', 'M', 'SW CY', 'CRP', 0, 'Technology services company with a Huntsville office at Bridge Street.', 'smxtech.com'],

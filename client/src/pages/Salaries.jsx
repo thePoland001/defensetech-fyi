@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { CLEARANCE_LEVELS, JOB_FAMILIES, LEVELS } from '../../../shared/options.js';
 import { useApi, useApp, useUnlock } from '../api.jsx';
 import { Empty, Locked, Spinner } from '../components/Bits.jsx';
+import MarketBenchmark from '../components/MarketBenchmark.jsx';
 import { SearchIcon } from '../components/Icons.jsx';
 import SalaryTable, { FakeSalaryRows } from '../components/SalaryTable.jsx';
 import { hourly, money, plural } from '../format.js';
@@ -89,6 +90,8 @@ export default function Salaries({ defaultType = 'full_time' }) {
           {!intern && <option value="yoe_desc">Most experience</option>}
         </select>
       </div>
+
+      {!intern && params.get('title') && <MarketBenchmark family={params.get('title')} />}
 
       {!unlocked ? (
         <Locked count={totalPoints}>

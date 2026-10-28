@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { initDb, query } from './db.js';
 import { COOKIE_NAME, COOKIE_OPTIONS, signUnlock, verifyUnlock, hashIp } from './token.js';
 import { TAGS, AREAS, SIZES } from './data/companies.js';
+import { companyPostings, familyBenchmark, postingCount } from './market.js';
 import {
   JOB_FAMILIES, LEVELS, EMPLOYMENT_TYPES, HOURLY_TYPES, CLEARANCE_LEVELS,
   WORK_ARRANGEMENTS, EDUCATION, LOCATIONS, slugify,
@@ -107,7 +108,12 @@ app.get('/api/companies', asyncRoute(async (req, res) => {
     GROUP BY c.id ORDER BY c.name`);
   res.json({
     unlocked,
-    companies: rows.map((r) => ({ ...r, tags: splitTags(r.tags), median_tc: unlocked ? r.median_tc : null })),
+    companies: rows.map((r) => ({
+      ...r,
+      tags: splitTags(r.tags),
+      median_tc: unlocked ? r.median_tc : null,
+      posting_count: postingCount(r.slug),
+    })),
   });
 }));
 
@@ -169,8 +175,17 @@ app.get('/api/companies/:slug', asyncRoute(async (req, res) => {
       max_hourly: unlocked ? intern.max_hourly : null,
       levels: internLevels,
     },
+    postings: companyPostings(company.slug, unlocked),
   });
 }));
+
+// ------------------------------------------------------------------------------- market
+
+app.get('/api/market/benchmark', (req, res) => {
+  const family = String(req.query.family || '');
+  if (!JOB_FAMILIES.includes(family)) return res.status(400).json({ error: 'Unknown job family' });
+  res.json({ unlocked: Boolean(req.unlock), ...familyBenchmark(family, Boolean(req.unlock)) });
+});
 
 // ------------------------------------------------------------------------------- clearances
 
