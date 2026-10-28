@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import pg from 'pg';
 import { COMPANY_ROWS } from './data/companies.js';
 import { ESTIMATES_VERSION, buildEstimates } from './data/estimates.js';
@@ -27,6 +29,8 @@ export async function initDb() {
   } else {
     const { PGlite } = await import('@electric-sql/pglite');
     const dir = process.env.PGLITE_DIR || './.data/pglite';
+    // PGlite creates only the last path segment, so make sure the parent exists on a fresh clone.
+    fs.mkdirSync(path.dirname(path.resolve(dir)), { recursive: true });
     const db = new PGlite(dir);
     await db.waitReady;
     client = db;
