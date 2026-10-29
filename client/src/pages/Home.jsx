@@ -39,7 +39,7 @@ export default function Home() {
             Salaries, clearance requirements and intern clearance sponsorship at {t ? Math.floor(t.companies / 50) * 50 : 300}+ defense companies in Huntsville,
             from the primes on Explorer Boulevard to the small businesses that keep Redstone running.
           </p>
-          <CompanySearch variant="hero" placeholder="Search a company, e.g. Torch, Dynetics, Lockheed…" />
+          <CompanySearch variant="hero" placeholder="Search a company or title, e.g. Dynetics or software engineer" />
           <div className="quick-chips">
             <span>Popular:</span>
             {QUICK.map(([slug, name]) => (

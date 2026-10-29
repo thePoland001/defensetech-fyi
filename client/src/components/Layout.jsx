@@ -3,11 +3,12 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useUnlock } from '../api.jsx';
 import { Logo } from './Bits.jsx';
 import CompanySearch from './CompanySearch.jsx';
-import { BuildingIcon, CapIcon, CheckIcon, MoneyIcon, PinIcon, PlusIcon, ShieldIcon } from './Icons.jsx';
+import { BuildingIcon, CapIcon, ChartIcon, CheckIcon, MoneyIcon, PinIcon, PlusIcon, ShieldIcon } from './Icons.jsx';
 
 const NAV = [
   { to: '/salaries', label: 'Salaries', icon: MoneyIcon },
   { to: '/companies', label: 'Companies', icon: BuildingIcon },
+  { to: '/compare', label: 'Compare', icon: ChartIcon },
   { to: '/internships', label: 'Internships', icon: CapIcon },
   { to: '/clearances', label: 'Clearances', icon: ShieldIcon },
 ];
@@ -23,7 +24,7 @@ export default function Layout() {
         <div className="header-top container">
           <Logo />
           <div className="header-search">
-            <CompanySearch variant="header" placeholder="Search companies" />
+            <CompanySearch variant="header" placeholder="Search companies or titles" />
           </div>
           <div className="header-actions">
             <Link to="/about" className="header-link">About</Link>
@@ -64,6 +65,7 @@ export default function Layout() {
               <h4>Explore</h4>
               <Link to="/salaries">Salaries</Link>
               <Link to="/companies">Companies</Link>
+              <Link to="/compare">Compare</Link>
               <Link to="/internships">Internships</Link>
               <Link to="/clearances">Clearances</Link>
             </div>

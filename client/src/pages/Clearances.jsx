@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useApi, useUnlock } from '../api.jsx';
 import { Bar, Blur, ClearanceBadge, CompanyLogo, SizeBadge, Spinner } from '../components/Bits.jsx';
 import { fakeMoney, money, pct } from '../format.js';
+import EstimateNotice from '../components/EstimateNotice.jsx';
 import { usePageTitle } from './usePageTitle.js';
 
 const LEVEL_INFO = {
@@ -35,6 +36,8 @@ export default function Clearances() {
           <p className="page-sub">How often Huntsville defense roles require a clearance, who pays to get you one, and what each level is worth.</p>
         </div>
       </div>
+
+      {data && <EstimateNotice companies={data.companies} field="ft" />}
 
       <section className="card">
         <h2>Clearance levels & pay</h2>
@@ -74,14 +77,14 @@ export default function Clearances() {
             <button className={sort === 'tssci_rate' ? 'active' : ''} onClick={() => setSort('tssci_rate')}>TS/SCI share</button>
           </div>
         </div>
-        <p className="card-sub">Companies with at least 3 full-time reports. "Company sponsored" is the share of cleared hires whose clearance the company processed.</p>
+        <p className="card-sub">Companies with at least 3 full-time data points. "Company sponsored" is the share of cleared hires whose clearance the company processed.</p>
         {loading ? <Spinner /> : (
           <div className="table-wrap">
             <table className="data-table">
               <thead>
                 <tr>
                   <th>Company</th>
-                  <th className="num">Reports</th>
+                  <th className="num">Data points</th>
                   <th>Roles requiring clearance</th>
                   <th>Company sponsored</th>
                   <th className="num">TS/SCI share</th>
@@ -97,7 +100,7 @@ export default function Clearances() {
                         <SizeBadge size={c.size} />
                       </div>
                     </td>
-                    <td className="num">{c.ft_n}</td>
+                    <td className="num">{c.ft_n}{c.ft_est === c.ft_n && <span className="sub">estimates</span>}</td>
                     <td><div className="bar-cell"><Bar value={c.clearance_rate ?? 0} /><strong>{pct(c.clearance_rate)}</strong></div></td>
                     <td><div className="bar-cell"><Bar value={c.ft_sponsor_rate ?? 0} tone="green" /><strong>{pct(c.ft_sponsor_rate)}</strong></div></td>
                     <td className="num">{pct(c.tssci_rate)}</td>

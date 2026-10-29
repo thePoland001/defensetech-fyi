@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { arrangementLabel, levelLabel } from '../../../shared/options.js';
+import { JOB_FAMILIES, arrangementLabel, levelLabel } from '../../../shared/options.js';
 import { fakeMoney, hourly, money, monthYear, years } from '../format.js';
 import { ClearanceBadge, CompanyLogo, EstimateBadge } from './Bits.jsx';
+import ReportButton from './ReportButton.jsx';
 
 const SPONSOR_TEXT = { yes: 'Company sponsored', had: 'Already held', no: 'Required at hire' };
 
@@ -92,6 +93,7 @@ export default function SalaryTable({ rows, hideCompany = false, mode = 'full_ti
                   </>
                 )}
                 {s.notes && <span className="note" title={s.notes}>“{s.notes}”</span>}
+                {s.source === 'user' && typeof s.id === 'number' && <ReportButton id={s.id} />}
               </td>
             </tr>
           ))}
@@ -104,7 +106,7 @@ export default function SalaryTable({ rows, hideCompany = false, mode = 'full_ti
 // Plausible-looking blurred rows for locked states. No real data is ever rendered here.
 export function FakeSalaryRows({ n = 6, hideCompany = false, mode = 'full_time', company }) {
   const names = ['Lockheed Martin', 'Torch Technologies', 'Dynetics (Leidos)', 'PeopleTec', 'Northrop Grumman', 'COLSA Corporation', 'Radiance Technologies', 'Boeing'];
-  const titles = ['Software Engineer', 'Systems Engineer', 'Electrical Engineer', 'Test Engineer', 'Mechanical Engineer', 'Cybersecurity Engineer'];
+  const titles = JOB_FAMILIES;
   const rows = Array.from({ length: n }, (_, i) => {
     const base = fakeMoney(`b${i}`, 72_000, 165_000);
     return {

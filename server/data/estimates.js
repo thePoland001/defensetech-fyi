@@ -5,15 +5,21 @@
 // the Huntsville MSA) and are always shown with an "Estimate" badge in the UI.
 // Bump ESTIMATES_VERSION whenever this file changes so the server re-seeds them.
 
-export const ESTIMATES_VERSION = 4;
+export const ESTIMATES_VERSION = 5;
 
-// Base salary ladders are for a Software Engineer in Huntsville at levels L1-L5; other job
-// families are scaled by ROLE_FACTORS. bonus = fraction of base, stock = $/yr.
-const PRIME_ROLES = ['Software Engineer', 'Systems Engineer', 'Electrical Engineer', 'Mechanical Engineer', 'Aerospace Engineer', 'Test Engineer', 'Cybersecurity Engineer', 'Program Manager', 'Business / Financial Analyst', 'Embedded Software Engineer'];
-const IT_ROLES = ['Software Engineer', 'Cybersecurity Engineer', 'Data Scientist / ML', 'IT / Network Engineer', 'Systems Engineer', 'Program Manager', 'Business / Financial Analyst'];
-const SERVICES_ROLES = ['Systems Engineer', 'Software Engineer', 'Test Engineer', 'Modeling & Simulation Engineer', 'Program Manager', 'Logistics / Supply Chain', 'Electrical Engineer', 'Business / Financial Analyst'];
-const SPACE_ROLES = ['Mechanical Engineer', 'Aerospace Engineer', 'Manufacturing Engineer', 'Electrical Engineer', 'Test Engineer', 'Software Engineer', 'Quality / Reliability Engineer'];
-const TECH_ROLES = ['Software Engineer', 'Software Engineer', 'Product Manager', 'Systems Engineer', 'Electrical Engineer', 'Mechanical Engineer', 'Test Engineer'];
+// Base salary ladders are for a Software Engineer in Huntsville at levels L1-L5; the other
+// titles are scaled by ROLE_FACTORS. bonus = fraction of base, stock = $/yr.
+// Each company's mix of the four tracked titles. Repeats weight the mix (IT shops are mostly
+// software and systems; space and rocket shops lean mechanical and aerospace).
+const SW = 'Software Engineer';
+const SYS = 'Systems Engineer';
+const AERO = 'Aerospace Engineer';
+const MECH = 'Mechanical Engineer';
+const PRIME_ROLES = [SW, SYS, AERO, MECH, SW, SYS];
+const IT_ROLES = [SW, SYS, SW];
+const SERVICES_ROLES = [SYS, SW, AERO, SYS, MECH];
+const SPACE_ROLES = [MECH, AERO, SW, SYS, MECH, AERO];
+const TECH_ROLES = [SW, SW, SW, SYS, MECH];
 
 const CLEAR_PRIME = { none: 0.12, 'Public Trust': 0.03, Secret: 0.6, 'Top Secret': 0.1, 'TS/SCI': 0.13, 'TS/SCI + Poly': 0.02 };
 const CLEAR_IT = { none: 0.15, 'Public Trust': 0.1, Secret: 0.5, 'Top Secret': 0.1, 'TS/SCI': 0.15 };
@@ -41,58 +47,40 @@ export const ESTIMATE_CONFIG = {
   'raytheon-rtx': { base: L(84, 101, 122, 145, 170), bonus: [0.02, 0.03, 0.04, 0.06, 0.09], stock5: 6000, ladder: RTX, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.4, n: 24 },
   'collins-aerospace-rtx': { base: L(82, 99, 119, 141, 165), bonus: [0.02, 0.03, 0.04, 0.06, 0.09], ladder: RTX, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [24, 32], sponsor: 0.3, n: 14 },
   'l3harris-technologies': { base: L(82, 98, 118, 140, 165), bonus: [0.01, 0.02, 0.04, 0.06, 0.08], ladder: L3H, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.35, n: 20 },
-  'aerojet-rocketdyne-l3harris': { base: L(84, 100, 121, 143, 168), bonus: [0.01, 0.02, 0.04, 0.06, 0.08], ladder: L3H, roles: ['Mechanical Engineer', 'Aerospace Engineer', 'Systems Engineer', 'Test Engineer', 'Manufacturing Engineer', 'Program Manager'], clear: CLEAR_PRIME, intern: [24, 32], sponsor: 0.3, n: 14 },
+  'aerojet-rocketdyne-l3harris': { base: L(84, 100, 121, 143, 168), bonus: [0.01, 0.02, 0.04, 0.06, 0.08], ladder: L3H, roles: [AERO, MECH, SYS, AERO], clear: CLEAR_PRIME, intern: [24, 32], sponsor: 0.3, n: 14 },
   'general-dynamics-mission-systems': { base: L(80, 97, 117, 138, 160), bonus: B_SMALL, ladder: ROMAN, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.35, n: 14 },
   'general-dynamics-information-technology-gdit': { base: L(80, 98, 118, 140, 162), bonus: B_SMALL, ladder: ROMAN, roles: IT_ROLES, clear: CLEAR_IT, intern: [21, 29], sponsor: 0.25, n: 16 },
   'bae-systems': { base: L(82, 98, 118, 140, 163), bonus: [0.01, 0.02, 0.03, 0.05, 0.07], ladder: ROMAN, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.35, n: 18 },
-  leidos: { base: L(82, 100, 121, 145, 170), bonus: [0.01, 0.02, 0.04, 0.06, 0.09], ladder: NUM, roles: IT_ROLES.concat(['Electrical Engineer', 'Test Engineer']), clear: CLEAR_IT, intern: [22, 30], sponsor: 0.35, n: 20 },
-  'dynetics-leidos': { base: L(85, 104, 126, 150, 176), bonus: [0.03, 0.04, 0.06, 0.08, 0.1], ladder: NUM, roles: PRIME_ROLES.concat(['Hardware / FPGA Engineer', 'RF / Antenna Engineer']), clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.55, n: 24 },
-  saic: { base: L(82, 100, 122, 147, 172), bonus: [0.01, 0.02, 0.03, 0.05, 0.08], ladder: NUM, roles: SERVICES_ROLES.concat(['Cybersecurity Engineer']), clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 20 },
+  leidos: { base: L(82, 100, 121, 145, 170), bonus: [0.01, 0.02, 0.04, 0.06, 0.09], ladder: NUM, roles: [SW, SYS, SW, AERO], clear: CLEAR_IT, intern: [22, 30], sponsor: 0.35, n: 20 },
+  'dynetics-leidos': { base: L(85, 104, 126, 150, 176), bonus: [0.03, 0.04, 0.06, 0.08, 0.1], ladder: NUM, roles: [SW, SYS, AERO, MECH, SYS, AERO], clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.55, n: 24 },
+  saic: { base: L(82, 100, 122, 147, 172), bonus: [0.01, 0.02, 0.03, 0.05, 0.08], ladder: NUM, roles: SERVICES_ROLES, clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 20 },
   'booz-allen-hamilton': { base: L(84, 103, 127, 152, 182), bonus: [0.03, 0.04, 0.06, 0.08, 0.11], ladder: BOOZ, roles: IT_ROLES, clear: CLEAR_IT, intern: [24, 32], sponsor: 0.35, n: 20 },
   'caci-international': { base: L(80, 98, 119, 142, 166), bonus: [0.01, 0.02, 0.04, 0.05, 0.08], ladder: ROMAN, roles: IT_ROLES, clear: CLEAR_IT, intern: [22, 29], sponsor: 0.3, n: 16 },
   kbr: { base: L(80, 97, 117, 139, 162), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES, clear: CLEAR_PRIME, intern: [21, 28], sponsor: 0.3, n: 16 },
-  parsons: { base: L(81, 98, 118, 140, 163), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES.concat(['Cybersecurity Engineer']), clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.3, n: 16 },
-  amentum: { base: L(77, 93, 113, 134, 156), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES.concat(['Aerospace Engineer']), clear: CLEAR_PRIME, intern: [20, 27], sponsor: 0.2, n: 16 },
+  parsons: { base: L(81, 98, 118, 140, 163), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES, clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.3, n: 16 },
+  amentum: { base: L(77, 93, 113, 134, 156), bonus: B_SMALL, ladder: ROMAN, roles: [SYS, AERO, SW, MECH], clear: CLEAR_PRIME, intern: [20, 27], sponsor: 0.2, n: 16 },
   mantech: { base: L(80, 98, 118, 140, 163), bonus: B_SMALL, ladder: ROMAN, roles: IT_ROLES, clear: CLEAR_IT, intern: [21, 28], sponsor: 0.25, n: 14 },
-  peraton: { base: L(81, 99, 120, 143, 167), bonus: B_SMALL, ladder: ROMAN, roles: IT_ROLES.concat(['Aerospace Engineer']), clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 14 },
+  peraton: { base: L(81, 99, 120, 143, 167), bonus: B_SMALL, ladder: ROMAN, roles: [SW, SYS, SW, AERO], clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 14 },
   'hii-mission-technologies-camber': { base: L(78, 95, 115, 137, 159), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES, clear: CLEAR_PRIME, intern: [21, 28], sponsor: 0.3, n: 14 },
-  'teledyne-brown-engineering': { base: L(77, 93, 112, 133, 155), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES.concat(['Mechanical Engineer', 'Aerospace Engineer']), clear: CLEAR_PRIME, intern: [20, 27], sponsor: 0.35, n: 16 },
+  'teledyne-brown-engineering': { base: L(77, 93, 112, 133, 155), bonus: B_SMALL, ladder: ROMAN, roles: [SYS, MECH, AERO, SW], clear: CLEAR_PRIME, intern: [20, 27], sponsor: 0.35, n: 16 },
   'textron-systems': { base: L(81, 98, 118, 140, 163), bonus: [0.02, 0.03, 0.04, 0.06, 0.08], ladder: ROMAN, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.3, n: 12 },
-  'bell-textron': { base: L(84, 101, 122, 146, 172), bonus: [0.02, 0.03, 0.05, 0.07, 0.09], ladder: ROMAN, roles: ['Systems Engineer', 'Aerospace Engineer', 'Mechanical Engineer', 'Software Engineer', 'Program Manager', 'Test Engineer'], clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.25, n: 12 },
-  'general-atomics-electromagnetic-systems': { base: L(86, 104, 126, 150, 176), bonus: [0.02, 0.03, 0.05, 0.07, 0.1], ladder: ROMAN, roles: ['Electrical Engineer', 'Mechanical Engineer', 'Systems Engineer', 'Software Engineer', 'Test Engineer', 'Hardware / FPGA Engineer'], clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.35, n: 14 },
-  'general-atomics-aeronautical-systems': { base: L(85, 103, 124, 148, 174), bonus: [0.02, 0.03, 0.05, 0.07, 0.1], ladder: ROMAN, roles: ['Systems Engineer', 'Software Engineer', 'Aerospace Engineer', 'Test Engineer', 'Program Manager', 'Logistics / Supply Chain'], clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.3, n: 12 },
+  'bell-textron': { base: L(84, 101, 122, 146, 172), bonus: [0.02, 0.03, 0.05, 0.07, 0.09], ladder: ROMAN, roles: [AERO, SYS, MECH, SW], clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.25, n: 12 },
+  'general-atomics-electromagnetic-systems': { base: L(86, 104, 126, 150, 176), bonus: [0.02, 0.03, 0.05, 0.07, 0.1], ladder: ROMAN, roles: [MECH, SYS, SW], clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.35, n: 14 },
+  'general-atomics-aeronautical-systems': { base: L(85, 103, 124, 148, 174), bonus: [0.02, 0.03, 0.05, 0.07, 0.1], ladder: ROMAN, roles: [SYS, SW, AERO], clear: CLEAR_PRIME, intern: [24, 33], sponsor: 0.3, n: 12 },
   'blue-origin': { base: L(92, 112, 138, 165, 198), bonus: [0.02, 0.03, 0.05, 0.07, 0.1], ladder: ROMAN, roles: SPACE_ROLES, clear: CLEAR_SPACE, intern: [28, 38], sponsor: 0.04, n: 20 },
-  'palantir-technologies': { base: L(145, 165, 190, 215, 245), bonus: [0, 0, 0, 0, 0], stock: [40000, 65000, 100000, 150000, 210000], signing: [15000, 10000, 0, 0, 0], ladder: TECH, roles: ['Software Engineer', 'Software Engineer', 'Software Engineer', 'Product Manager', 'Data Scientist / ML'], clear: CLEAR_TECH, intern: [50, 60], sponsor: 0.3, n: 16 },
+  'palantir-technologies': { base: L(145, 165, 190, 215, 245), bonus: [0, 0, 0, 0, 0], stock: [40000, 65000, 100000, 150000, 210000], signing: [15000, 10000, 0, 0, 0], ladder: TECH, roles: [SW], clear: CLEAR_TECH, intern: [50, 60], sponsor: 0.3, n: 16 },
   'anduril-industries': { base: L(140, 160, 185, 215, 245), bonus: [0, 0, 0, 0, 0], stock: [35000, 55000, 90000, 140000, 200000], signing: [10000, 10000, 0, 0, 0], ladder: ['Engineer I', 'Engineer II', 'Senior Engineer', 'Staff Engineer', 'Principal Engineer'], roles: TECH_ROLES, clear: CLEAR_TECH, intern: [45, 55], sponsor: 0.25, n: 18 },
   'accenture-federal-services': { base: L(80, 99, 122, 148, 178), bonus: [0.02, 0.03, 0.05, 0.07, 0.1], ladder: ['Analyst', 'Consultant', 'Senior Consultant', 'Manager', 'Senior Manager'], roles: IT_ROLES, clear: CLEAR_IT, intern: [24, 32], sponsor: 0.15, n: 12 },
   'cgi-federal': { base: L(76, 93, 113, 135, 158), bonus: [0.01, 0.02, 0.03, 0.04, 0.06], ladder: ['Associate Consultant', 'Consultant', 'Senior Consultant', 'Lead Analyst', 'Director'], roles: IT_ROLES, clear: CLEAR_IT, intern: [21, 28], sponsor: 0.1, n: 10 },
-  v2x: { base: L(74, 90, 109, 130, 152), bonus: B_SMALL, ladder: ROMAN, roles: ['Logistics / Supply Chain', 'Systems Engineer', 'Engineering Technician', 'Program Manager', 'Software Engineer', 'IT / Network Engineer'], clear: CLEAR_PRIME, intern: [19, 26], sponsor: 0.2, n: 12 },
-  moog: { base: L(80, 96, 115, 137, 160), bonus: [0.01, 0.02, 0.04, 0.05, 0.07], ladder: ROMAN, roles: ['Mechanical Engineer', 'Electrical Engineer', 'Systems Engineer', 'Software Engineer', 'Manufacturing Engineer', 'Test Engineer'], clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.2, n: 12 },
+  v2x: { base: L(74, 90, 109, 130, 152), bonus: B_SMALL, ladder: ROMAN, roles: [SYS, SW], clear: CLEAR_PRIME, intern: [19, 26], sponsor: 0.2, n: 12 },
+  moog: { base: L(80, 96, 115, 137, 160), bonus: [0.01, 0.02, 0.04, 0.05, 0.07], ladder: ROMAN, roles: [MECH, SYS, SW, AERO], clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.2, n: 12 },
 };
 
 export const ROLE_FACTORS = {
-  'Software Engineer': 1.0,
-  'Embedded Software Engineer': 1.0,
-  'Systems Engineer': 0.99,
-  'Electrical Engineer': 0.98,
-  'Hardware / FPGA Engineer': 1.0,
-  'RF / Antenna Engineer': 1.01,
-  'Mechanical Engineer': 0.94,
-  'Aerospace Engineer': 0.97,
-  'Test Engineer': 0.92,
-  'Cybersecurity Engineer': 0.98,
-  'Data Scientist / ML': 1.03,
-  'Modeling & Simulation Engineer': 0.96,
-  'Manufacturing Engineer': 0.9,
-  'Quality / Reliability Engineer': 0.88,
-  'Program Manager': 1.12,
-  'Project Manager': 0.98,
-  'Product Manager': 1.05,
-  'Business / Financial Analyst': 0.8,
-  'Logistics / Supply Chain': 0.78,
-  'IT / Network Engineer': 0.86,
-  'Engineering Technician': 0.64,
-  'Contracts / Procurement': 0.82,
+  [SW]: 1.0,
+  [SYS]: 0.99,
+  [AERO]: 0.97,
+  [MECH]: 0.94,
 };
 
 // Typical Huntsville pay premium for holding (and using) a clearance, relative to uncleared.
@@ -100,7 +88,9 @@ const CLEARANCE_PREMIUM = { none: 1, 'Public Trust': 1.01, Secret: 1.04, 'Top Se
 
 const YOE = [[0, 2], [2, 5], [5, 9], [9, 14], [14, 22]];
 const LEVEL_WEIGHTS = [0.27, 0.3, 0.24, 0.13, 0.06];
-const MANAGER_ROLES = new Set(['Program Manager', 'Product Manager']);
+// People-management rungs (Accenture's "Manager", CGI's "Director") are left out for now;
+// estimates only cover individual-contributor engineering levels.
+const isManagerRung = (name) => /manager|director/i.test(name);
 
 function mulberry32(seed) {
   return function () {
@@ -141,7 +131,7 @@ export function buildEstimates(now = new Date()) {
     for (let i = 0; i < cfg.n; i++) {
       const title = cfg.roles[i % cfg.roles.length];
       let lvl = Number(pickWeighted(rand, Object.fromEntries(LEVEL_WEIGHTS.map((w, j) => [j, w]))));
-      if (MANAGER_ROLES.has(title) && lvl < 2) lvl += 2;
+      while (lvl > 0 && isManagerRung(cfg.ladder[lvl])) lvl--;
       const factor = ROLE_FACTORS[title] ?? 0.95;
       const clearance = pickWeighted(rand, cfg.clear);
       const required = clearance !== 'none';
@@ -186,13 +176,13 @@ export function buildEstimates(now = new Date()) {
     // Internships
     const internCount = Math.max(3, Math.round(cfg.n / 6));
     for (let i = 0; i < internCount; i++) {
-      const title = cfg.roles[(i * 3) % cfg.roles.length];
+      const title = cfg.roles[(i + 1) % cfg.roles.length];
       const hourly = Math.round(between(cfg.intern[0], cfg.intern[1]) * 2) / 2;
       const sponsoredYes = rand() < cfg.sponsor;
       const level = sponsoredYes ? (rand() < 0.85 ? 'Secret' : 'Top Secret') : null;
       rows.push({
         slug,
-        title: MANAGER_ROLES.has(title) ? 'Software Engineer' : title,
+        title,
         level: 'Intern',
         level_name: 'Intern',
         employment_type: 'intern',

@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { api, useApi } from '../api.jsx';
 import { usePageTitle } from './usePageTitle.js';
 
 export default function About() {
@@ -42,11 +43,13 @@ export default function About() {
         <li>Your IP address is never stored. A salted one-way hash is kept only to rate-limit spam.</li>
         <li>Submission dates are only shown, and only returned by the API, at month precision.</li>
         <li>A single cookie remembers that you've contributed. It holds no personal information.</li>
+        <li>You can delete your own submission at any time from this browser, below.</li>
       </ul>
+      <MySubmission />
 
       <h2>Please keep it unclassified</h2>
       <p>
-        Never post classified information, CUI, or details about sensitive programs. Job family, level, pay and clearance
+        Never post classified information, CUI, or details about sensitive programs. Title, level, pay and clearance
         level are all that's needed. Notes that look like they contain sensitive information may be removed.
       </p>
 
@@ -57,6 +60,37 @@ export default function About() {
       </p>
 
       <p><Link to="/add-salary" className="btn btn-primary">Add your salary</Link></p>
+    </div>
+  );
+}
+
+// Lets a contributor remove the entry tied to this browser's unlock cookie.
+function MySubmission() {
+  const { data } = useApi('/me/submission');
+  const [state, setState] = useState('idle'); // idle | deleting | deleted | error
+  const sub = data?.submission;
+  if (state === 'deleted') return <div className="notice ok">Your submission was deleted.</div>;
+  if (!sub) return null;
+
+  async function remove() {
+    if (!window.confirm(`Delete your ${sub.company_name} ${sub.title} submission? This can't be undone.`)) return;
+    setState('deleting');
+    try {
+      await api('/me/submission', { method: 'DELETE' });
+      setState('deleted');
+    } catch {
+      setState('error');
+    }
+  }
+
+  return (
+    <div className="card my-submission">
+      <div>
+        <strong>Your submission</strong>
+        <span className="sub">{sub.company_name} · {sub.title}{sub.employment_type !== 'full_time' ? ' · Internship' : ''}</span>
+        {state === 'error' && <span className="field-error">Couldn't delete it. Try again.</span>}
+      </div>
+      <button className="btn btn-ghost btn-sm danger" onClick={remove} disabled={state === 'deleting'}>Delete it</button>
     </div>
   );
 }

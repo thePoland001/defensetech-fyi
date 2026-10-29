@@ -1,10 +1,26 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { JOB_FAMILIES } from '../../../shared/options.js';
 import { useApp } from '../api.jsx';
 import { CompanyLogo, SizeBadge } from './Bits.jsx';
-import { PlusIcon, SearchIcon } from './Icons.jsx';
+import { MoneyIcon, PlusIcon, SearchIcon } from './Icons.jsx';
 
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// "soft", "software", "sw eng" → Software Engineer. Matches any word prefix of the title,
+// plus a few common abbreviations.
+const TITLE_ALIASES = { swe: 'Software Engineer', sw: 'Software Engineer', dev: 'Software Engineer', developer: 'Software Engineer', programmer: 'Software Engineer', sys: 'Systems Engineer', aero: 'Aerospace Engineer', mech: 'Mechanical Engineer', me: 'Mechanical Engineer' };
+
+export function matchTitles(q) {
+  const words = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (!words.length || words.join('').length < 2) return [];
+  const alias = TITLE_ALIASES[words[0]];
+  return JOB_FAMILIES.filter((t) => {
+    if (alias === t) return true;
+    const tw = t.toLowerCase().split(' ');
+    return words.every((w) => tw.some((x) => x.startsWith(w)));
+  });
+}
 
 export function matchCompanies(companies, q, limit = 8) {
   if (!companies) return [];
@@ -24,7 +40,7 @@ export function matchCompanies(companies, q, limit = 8) {
 
 // variant: 'header' | 'hero' | 'field'. In 'field' mode it acts as a form combobox and can
 // offer to add a company that isn't listed.
-export default function CompanySearch({ variant = 'header', onSelect, onCreate, value, placeholder = 'Search Huntsville defense companies', autoFocus }) {
+export default function CompanySearch({ variant = 'header', onSelect, onCreate, value, placeholder = 'Search companies or titles', autoFocus }) {
   const { companies } = useApp();
   const navigate = useNavigate();
   const [q, setQ] = useState(value || '');
@@ -36,8 +52,10 @@ export default function CompanySearch({ variant = 'header', onSelect, onCreate, 
   useEffect(() => setQ(value || ''), [value]);
 
   const results = useMemo(() => matchCompanies(companies, q), [companies, q]);
-  const showCreate = variant === 'field' && q.trim().length >= 2 && !results.some((c) => norm(c.name) === norm(q));
-  const options = showCreate ? [...results, { create: true, name: q.trim() }] : results;
+  // Outside the form, the search box also jumps to salaries for a title.
+  const titles = useMemo(() => (variant === 'field' ? [] : matchTitles(q).map((t) => ({ title: t }))), [variant, q]);
+  const showCreate = variant === 'field' && onCreate && q.trim().length >= 2 && !results.some((c) => norm(c.name) === norm(q));
+  const options = [...titles, ...results, ...(showCreate ? [{ create: true, name: q.trim() }] : [])];
 
   useEffect(() => {
     const close = (e) => wrap.current && !wrap.current.contains(e.target) && setOpen(false);
@@ -49,6 +67,11 @@ export default function CompanySearch({ variant = 'header', onSelect, onCreate, 
     setOpen(false);
     if (opt.create) {
       onCreate?.(opt.name);
+      return;
+    }
+    if (opt.title) {
+      setQ('');
+      navigate(`/salaries?title=${encodeURIComponent(opt.title)}`);
       return;
     }
     if (onSelect) {
@@ -103,7 +126,7 @@ export default function CompanySearch({ variant = 'header', onSelect, onCreate, 
         <ul className="cs-list" id={listId} role="listbox">
           {options.map((opt, i) => (
             <li
-              key={opt.create ? '__create' : opt.slug}
+              key={opt.create ? '__create' : opt.title ? `t-${opt.title}` : opt.slug}
               role="option"
               aria-selected={i === active}
               className={i === active ? 'active' : ''}
@@ -113,7 +136,12 @@ export default function CompanySearch({ variant = 'header', onSelect, onCreate, 
                 choose(opt);
               }}
             >
-              {opt.create ? (
+              {opt.title ? (
+                <>
+                  <span className="cs-create-icon"><MoneyIcon size={16} /></span>
+                  <span className="cs-name"><strong>{opt.title}</strong> salaries in Huntsville</span>
+                </>
+              ) : opt.create ? (
                 <>
                   <span className="cs-create-icon"><PlusIcon size={16} /></span>
                   <span>Add <strong>“{opt.name}”</strong> as a new Huntsville company</span>

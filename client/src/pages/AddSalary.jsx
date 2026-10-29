@@ -102,7 +102,7 @@ export default function AddSalary() {
   function validate() {
     const e = {};
     if (!form.companySlug && !form.newCompanyName) e.company = 'Pick your company, or add it if it isn\'t listed.';
-    if (!form.title) e.title = 'Choose the closest job family.';
+    if (!form.title) e.title = 'Choose the closest title.';
     if (!internLike && !form.level) e.level = 'Choose your level.';
     if (!internLike && form.yearsExp === '') e.yearsExp = 'Required.';
     if (form.yearsAtCompany !== '' && form.yearsExp !== '' && Number(form.yearsAtCompany) > Number(form.yearsExp)) e.yearsAtCompany = 'Can\'t be more than your total experience.';
@@ -223,7 +223,7 @@ export default function AddSalary() {
           <fieldset>
             <legend><span className="step">2</span> Your role</legend>
             <div className="field-row">
-              <Field label="Job family" error={errors.title} htmlFor="title">
+              <Field label="Title" error={errors.title} htmlFor="title">
                 <select id="title" value={form.title} onChange={(e) => set('title')(e.target.value)}>
                   <option value="">Select…</option>
                   {JOB_FAMILIES.map((t) => <option key={t}>{t}</option>)}
@@ -380,7 +380,7 @@ export default function AddSalary() {
               {company ? <CompanyLogo name={company.name} domain={company.domain} size={36} /> : <span className="preview-blank" />}
               <div>
                 <strong>{company?.name || form.newCompanyName || 'Company'}</strong>
-                <span className="sub">{form.title || 'Job family'}{!internLike && form.level ? ` · ${form.level}` : ''}</span>
+                <span className="sub">{form.title || 'Title'}{!internLike && form.level ? ` · ${form.level}` : ''}</span>
               </div>
             </div>
             <div className="preview-total">

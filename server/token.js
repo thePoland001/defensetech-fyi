@@ -21,12 +21,13 @@ export const COOKIE_OPTIONS = {
 const b64 = (buf) => Buffer.from(buf).toString('base64url');
 const hmac = (data) => crypto.createHmac('sha256', SECRET).update(data).digest('base64url');
 
-export function signUnlock(salaryId) {
-  const payload = b64(JSON.stringify({ sid: salaryId, iat: Date.now() }));
+// ep is the database epoch (see db.js): a token from a different database doesn't unlock.
+export function signUnlock(salaryId, ep) {
+  const payload = b64(JSON.stringify({ sid: salaryId, ep, iat: Date.now() }));
   return `${payload}.${hmac(payload)}`;
 }
 
-export function verifyUnlock(token) {
+export function verifyUnlock(token, ep) {
   if (typeof token !== 'string' || !token.includes('.')) return null;
   const [payload, sig] = token.split('.');
   const expected = hmac(payload);
@@ -34,6 +35,7 @@ export function verifyUnlock(token) {
   try {
     const data = JSON.parse(Buffer.from(payload, 'base64url').toString());
     if (Date.now() - data.iat > MAX_AGE_MS) return null;
+    if (data.ep !== ep) return null;
     return data;
   } catch {
     return null;

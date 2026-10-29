@@ -17,7 +17,7 @@ export function Logo() {
 }
 
 // Domains whose favicon service result is a generic globe or renders blank; use initials.
-const NO_FAVICON = new Set(['accenturefederal.com', 'calibresys.com', 'dynetics.com', 'teledynebrown.com', 'spa.com', 'yulista.com']);
+const NO_FAVICON = new Set(['lockheedmartin.com', 'accenturefederal.com', 'calibresys.com', 'dynetics.com', 'teledynebrown.com', 'spa.com', 'yulista.com']);
 
 const PALETTE = ['#0B3D91', '#1F6FB2', '#2D6A4F', '#5C4D9A', '#8C3B3B', '#2F5D62', '#4A5568', '#9C6B1E', '#205375', '#6B3E75'];
 

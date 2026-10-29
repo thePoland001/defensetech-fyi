@@ -5,10 +5,11 @@ import rateLimit from 'express-rate-limit';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { initDb, query } from './db.js';
+import { dbEpoch, initDb, query, transaction } from './db.js';
 import { COOKIE_NAME, COOKIE_OPTIONS, signUnlock, verifyUnlock, hashIp } from './token.js';
 import { TAGS, AREAS, SIZES } from './data/companies.js';
 import { companyPostings, familyBenchmark, postingCount } from './market.js';
+import { registerModeration } from './moderation.js';
 import {
   JOB_FAMILIES, LEVELS, EMPLOYMENT_TYPES, HOURLY_TYPES, CLEARANCE_LEVELS,
   WORK_ARRANGEMENTS, EDUCATION, LOCATIONS, slugify,
@@ -26,7 +27,7 @@ app.use(cookieParser());
 
 // Every request learns whether the visitor has contributed (and so may see salary data).
 app.use((req, _res, next) => {
-  req.unlock = verifyUnlock(req.cookies?.[COOKIE_NAME]);
+  req.unlock = verifyUnlock(req.cookies?.[COOKIE_NAME], dbEpoch());
   next();
 });
 
@@ -59,20 +60,20 @@ app.get('/api/stats', asyncRoute(async (req, res) => {
       AVG(CASE WHEN clearance_required THEN 1.0 ELSE 0 END) FILTER (WHERE employment_type='full_time')::float8 AS clearance_rate,
       AVG(CASE WHEN clearance_sponsored='yes' THEN 1.0 ELSE 0 END) FILTER (WHERE employment_type IN ${INTERN_SQL})::float8 AS intern_sponsor_rate,
       percentile_cont(0.5) WITHIN GROUP (ORDER BY total_comp) FILTER (WHERE employment_type='full_time')::float8 AS median_tc
-      FROM salaries`),
+      FROM live_salaries`),
     query(`SELECT c.slug, c.name, c.domain, c.size, COUNT(*)::int AS n,
       percentile_cont(0.5) WITHIN GROUP (ORDER BY s.total_comp)::float8 AS median_tc
-      FROM salaries s JOIN companies c ON c.id=s.company_id
+      FROM live_salaries s JOIN companies c ON c.id=s.company_id
       WHERE s.employment_type='full_time'
       GROUP BY c.id HAVING COUNT(*) >= 5 ORDER BY median_tc DESC LIMIT 10`),
     query(`SELECT c.slug, c.name, c.domain, c.size, COUNT(*)::int AS n,
       AVG(CASE WHEN s.clearance_sponsored='yes' THEN 1.0 ELSE 0 END)::float8 AS rate
-      FROM salaries s JOIN companies c ON c.id=s.company_id
+      FROM live_salaries s JOIN companies c ON c.id=s.company_id
       WHERE s.employment_type IN ${INTERN_SQL}
       GROUP BY c.id HAVING COUNT(*) >= 3 ORDER BY rate DESC, n DESC LIMIT 8`),
     query(`SELECT title, COUNT(*)::int AS n,
       percentile_cont(0.5) WITHIN GROUP (ORDER BY total_comp)::float8 AS median_tc
-      FROM salaries WHERE employment_type='full_time'
+      FROM live_salaries WHERE employment_type='full_time'
       GROUP BY title HAVING COUNT(*) >= 5 ORDER BY median_tc DESC LIMIT 10`),
   ]);
 
@@ -99,12 +100,13 @@ app.get('/api/companies', asyncRoute(async (req, res) => {
   const unlocked = Boolean(req.unlock);
   const { rows } = await query(`SELECT c.slug, c.name, c.size, c.tags, c.area, c.hq, c.domain, c.user_added,
       COUNT(s.id)::int AS salary_count,
+      COUNT(s.id) FILTER (WHERE s.source='estimate')::int AS estimate_count,
       COUNT(s.id) FILTER (WHERE s.employment_type='full_time')::int AS ft_count,
       COUNT(s.id) FILTER (WHERE s.employment_type IN ${INTERN_SQL})::int AS intern_count,
       percentile_cont(0.5) WITHIN GROUP (ORDER BY s.total_comp) FILTER (WHERE s.employment_type='full_time')::float8 AS median_tc,
       AVG(CASE WHEN s.clearance_required THEN 1.0 ELSE 0 END) FILTER (WHERE s.employment_type='full_time')::float8 AS clearance_rate,
       AVG(CASE WHEN s.clearance_sponsored='yes' THEN 1.0 ELSE 0 END) FILTER (WHERE s.employment_type IN ${INTERN_SQL})::float8 AS intern_sponsor_rate
-    FROM companies c LEFT JOIN salaries s ON s.company_id=c.id
+    FROM companies c LEFT JOIN live_salaries s ON s.company_id=c.id
     GROUP BY c.id ORDER BY c.name`);
   res.json({
     unlocked,
@@ -127,29 +129,31 @@ app.get('/api/companies/:slug', asyncRoute(async (req, res) => {
     query(`SELECT title, level, COUNT(*)::int AS n,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY total_comp)::float8 AS median_tc,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY base)::float8 AS median_base
-      FROM salaries WHERE company_id=$1 AND employment_type='full_time'
+      FROM live_salaries WHERE company_id=$1 AND employment_type='full_time'
       GROUP BY title, level ORDER BY title, level`, [id]),
     query(`SELECT COALESCE(clearance_level, 'None') AS level, COUNT(*)::int AS n
-      FROM salaries WHERE company_id=$1 AND employment_type='full_time'
+      FROM live_salaries WHERE company_id=$1 AND employment_type='full_time'
       GROUP BY 1 ORDER BY n DESC`, [id]),
     query(`SELECT clearance_sponsored AS value, COUNT(*)::int AS n
-      FROM salaries WHERE company_id=$1 AND employment_type='full_time' AND clearance_required
+      FROM live_salaries WHERE company_id=$1 AND employment_type='full_time' AND clearance_required
       GROUP BY 1`, [id]),
     query(`SELECT COUNT(*)::int AS n,
         COUNT(*) FILTER (WHERE clearance_sponsored='yes')::int AS sponsored,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY hourly)::float8 AS median_hourly,
         MIN(hourly)::float8 AS min_hourly, MAX(hourly)::float8 AS max_hourly
-      FROM salaries WHERE company_id=$1 AND employment_type IN ${INTERN_SQL}`, [id]),
+      FROM live_salaries WHERE company_id=$1 AND employment_type IN ${INTERN_SQL}`, [id]),
     query(`SELECT clearance_level AS level, COUNT(*)::int AS n
-      FROM salaries WHERE company_id=$1 AND employment_type IN ${INTERN_SQL} AND clearance_sponsored='yes'
+      FROM live_salaries WHERE company_id=$1 AND employment_type IN ${INTERN_SQL} AND clearance_sponsored='yes'
       GROUP BY 1 ORDER BY n DESC`, [id]),
     query(`SELECT COUNT(*)::int AS total,
         COUNT(*) FILTER (WHERE source='user')::int AS user_count,
         COUNT(*) FILTER (WHERE source='estimate')::int AS estimate_count,
         COUNT(*) FILTER (WHERE employment_type='full_time')::int AS ft_count,
+        COUNT(*) FILTER (WHERE employment_type='full_time' AND source='estimate')::int AS ft_estimate_count,
+        COUNT(*) FILTER (WHERE employment_type IN ${INTERN_SQL} AND source='estimate')::int AS intern_estimate_count,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY total_comp) FILTER (WHERE employment_type='full_time')::float8 AS median_tc,
         COUNT(*) FILTER (WHERE nine_eighty AND employment_type='full_time')::int AS nine_eighty
-      FROM salaries WHERE company_id=$1`, [id]),
+      FROM live_salaries WHERE company_id=$1`, [id]),
   ]);
 
   const roles = [];
@@ -183,7 +187,7 @@ app.get('/api/companies/:slug', asyncRoute(async (req, res) => {
 
 app.get('/api/market/benchmark', (req, res) => {
   const family = String(req.query.family || '');
-  if (!JOB_FAMILIES.includes(family)) return res.status(400).json({ error: 'Unknown job family' });
+  if (!JOB_FAMILIES.includes(family)) return res.status(400).json({ error: 'Unknown title' });
   res.json({ unlocked: Boolean(req.unlock), ...familyBenchmark(family, Boolean(req.unlock)) });
 });
 
@@ -194,16 +198,18 @@ app.get('/api/clearances', asyncRoute(async (req, res) => {
   const [{ rows: byLevel }, { rows: companies }] = await Promise.all([
     query(`SELECT COALESCE(clearance_level, 'None') AS level, COUNT(*)::int AS n,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY total_comp)::float8 AS median_tc
-      FROM salaries WHERE employment_type='full_time' GROUP BY 1`),
+      FROM live_salaries WHERE employment_type='full_time' GROUP BY 1`),
     query(`SELECT c.slug, c.name, c.domain, c.size,
         COUNT(*) FILTER (WHERE s.employment_type='full_time')::int AS ft_n,
         COUNT(*) FILTER (WHERE s.employment_type IN ${INTERN_SQL})::int AS intern_n,
+        COUNT(*) FILTER (WHERE s.employment_type='full_time' AND s.source='estimate')::int AS ft_est,
+        COUNT(*) FILTER (WHERE s.employment_type IN ${INTERN_SQL} AND s.source='estimate')::int AS intern_est,
         AVG(CASE WHEN s.clearance_required THEN 1.0 ELSE 0 END) FILTER (WHERE s.employment_type='full_time')::float8 AS clearance_rate,
         AVG(CASE WHEN s.clearance_sponsored='yes' THEN 1.0 ELSE 0 END) FILTER (WHERE s.employment_type='full_time' AND s.clearance_required)::float8 AS ft_sponsor_rate,
         AVG(CASE WHEN s.clearance_sponsored='yes' THEN 1.0 ELSE 0 END) FILTER (WHERE s.employment_type IN ${INTERN_SQL})::float8 AS intern_sponsor_rate,
         AVG(CASE WHEN s.clearance_level IN ('TS/SCI','TS/SCI + Poly') THEN 1.0 ELSE 0 END) FILTER (WHERE s.employment_type='full_time')::float8 AS tssci_rate,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY s.hourly) FILTER (WHERE s.employment_type IN ${INTERN_SQL})::float8 AS intern_median_hourly
-      FROM salaries s JOIN companies c ON c.id=s.company_id
+      FROM live_salaries s JOIN companies c ON c.id=s.company_id
       GROUP BY c.id ORDER BY c.name`),
   ]);
   if (!unlocked) companies.forEach((c) => (c.intern_median_hourly = null));
@@ -219,7 +225,7 @@ app.get('/api/clearances', asyncRoute(async (req, res) => {
 // ------------------------------------------------------------------------------- salaries
 
 const SALARY_SELECT = `SELECT s.*, c.name AS company_name, c.slug AS company_slug, c.domain AS company_domain
-  FROM salaries s JOIN companies c ON c.id=s.company_id`;
+  FROM live_salaries s JOIN companies c ON c.id=s.company_id`;
 
 function monthStart(d) {
   const date = new Date(d);
@@ -294,7 +300,7 @@ app.get('/api/salaries', asyncRoute(async (req, res) => {
     query(`${SALARY_SELECT} ${whereSql} ORDER BY ${orderSql}, s.id DESC LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`, params),
     query(`SELECT COUNT(*)::int AS n,
         percentile_cont(ARRAY[0.25, 0.5, 0.75, 0.9]) WITHIN GROUP (ORDER BY ${valueCol}) AS pct
-      FROM salaries s JOIN companies c ON c.id=s.company_id ${whereSql}`, params),
+      FROM live_salaries s JOIN companies c ON c.id=s.company_id ${whereSql}`, params),
   ]);
 
   const pct = (summary.pct || []).map(num);
@@ -345,25 +351,16 @@ app.post('/api/salaries', submitLimiter, asyncRoute(async (req, res) => {
       const { rows } = await query(`SELECT id FROM companies WHERE slug=$1`, [b.companySlug]);
       if (!rows[0]) throw new ValidationError('company', 'Please pick a company from the list.');
       companyId = rows[0].id;
-    } else {
-      const name = str(b.newCompanyName, 80);
-      if (name.length < 2) throw new ValidationError('company', 'Please pick a company or add a new one.');
-      const slug = slugify(name);
-      const { rows: existing } = await query(`SELECT id FROM companies WHERE slug=$1 OR LOWER(name)=LOWER($2)`, [slug, name]);
-      if (existing[0]) companyId = existing[0].id;
-      else {
-        const { rows } = await query(
-          `INSERT INTO companies (slug, name, size, description, user_added) VALUES ($1,$2,'S',$3,TRUE) RETURNING id`,
-          [slug, name, 'Added by the community. Company details have not been reviewed yet.'],
-        );
-        companyId = rows[0].id;
-      }
     }
+    // A new company is only created once the rest of the submission has validated (below),
+    // so a rejected form never leaves an empty company behind.
+    const newCompanyName = companyId ? '' : str(b.newCompanyName, 80);
+    if (!companyId && newCompanyName.length < 2) throw new ValidationError('company', 'Please pick a company or add a new one.');
 
     const employmentType = oneOf(b.employmentType, EMPLOYMENT_TYPES.map((t) => t.value), 'employmentType', 'employment type');
     const hourlyType = HOURLY_TYPES.has(employmentType);
     const internLike = employmentType === 'intern' || employmentType === 'co_op';
-    const title = oneOf(b.title, JOB_FAMILIES, 'title', 'job family');
+    const title = oneOf(b.title, JOB_FAMILIES, 'title', 'title');
     const level = internLike ? 'Intern' : oneOf(b.level, LEVELS.map((l) => l.value), 'level', 'level');
     const yearsExp = int(b.yearsExp, 'yearsExp', 'Years of experience', 0, 50, !internLike);
     const yearsAtCompany = int(b.yearsAtCompany, 'yearsAtCompany', 'Years at company', 0, 50, false);
@@ -401,7 +398,16 @@ app.post('/api/salaries', submitLimiter, asyncRoute(async (req, res) => {
     const locationDetail = LOCATIONS.includes(b.locationDetail) ? b.locationDetail : '';
     const education = EDUCATION.some((e) => e.value === b.education) ? b.education : '';
 
-    const { rows: [inserted] } = await query(
+    const inserted = await transaction(async (q) => {
+      if (!companyId) {
+        const slug = slugify(newCompanyName);
+        const { rows: existing } = await q(`SELECT id FROM companies WHERE slug=$1 OR LOWER(name)=LOWER($2)`, [slug, newCompanyName]);
+        companyId = existing[0]?.id ?? (await q(
+          `INSERT INTO companies (slug, name, size, description, user_added) VALUES ($1,$2,'S',$3,TRUE) RETURNING id`,
+          [slug, newCompanyName, 'Added by the community. Company details have not been reviewed yet.'],
+        )).rows[0].id;
+      }
+      const { rows: [row] } = await q(
       `INSERT INTO salaries (company_id, title, specialization, level, level_name, employment_type, years_exp, years_at_company,
         base, bonus, stock, signing, hourly, total_comp, clearance_required, clearance_level, clearance_sponsored,
         work_arrangement, location_detail, education, nine_eighty, notes, source, ip_hash)
@@ -409,15 +415,19 @@ app.post('/api/salaries', submitLimiter, asyncRoute(async (req, res) => {
       [companyId, title, str(b.specialization, 80), level, str(b.levelName, 40), employmentType, yearsExp, yearsAtCompany,
         base, bonus, stock, signing, hourly, totalComp, clearanceRequired, clearanceLevel, sponsored,
         workArrangement, locationDetail, education, Boolean(b.nineEighty), str(b.notes, 500), hashIp(req.ip)],
-    );
+      );
+      return row;
+    });
 
-    res.cookie(COOKIE_NAME, signUnlock(inserted.id), COOKIE_OPTIONS);
+    res.cookie(COOKIE_NAME, signUnlock(inserted.id, dbEpoch()), COOKIE_OPTIONS);
     res.json({ ok: true, id: inserted.id });
   } catch (err) {
     if (err instanceof ValidationError) return res.status(400).json({ error: err.message, field: err.field });
     throw err;
   }
 }));
+
+registerModeration(app);
 
 // ------------------------------------------------------------------------------- static
 

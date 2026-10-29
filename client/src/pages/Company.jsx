@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { LEVELS } from '../../../shared/options.js';
 import { useApi, useApp, useUnlock } from '../api.jsx';
-import { Bar, Blur, ClearanceBadge, CompanyLogo, Empty, Locked, SizeBadge, Spinner } from '../components/Bits.jsx';
+import { Bar, Blur, ClearanceBadge, CompanyLogo, Empty, EstimateBadge, Locked, SizeBadge, Spinner } from '../components/Bits.jsx';
 import { ArrowLeft, ArrowRight, ExternalIcon, InfoIcon, PinIcon, PlusIcon } from '../components/Icons.jsx';
 import PostedRanges from '../components/PostedRanges.jsx';
 import SalaryTable, { FakeSalaryRows } from '../components/SalaryTable.jsx';
-import { fakeMoney, hourly, money, pct, plural } from '../format.js';
+import { basis, fakeMoney, hourly, money, pct, plural } from '../format.js';
 import NotFound from './NotFound.jsx';
 import { usePageTitle } from './usePageTitle.js';
 
@@ -31,6 +31,9 @@ export default function Company() {
   const sponsorTotal = sponsorship.reduce((s, r) => s + r.n, 0);
   const sponsoredFt = sponsorship.find((r) => r.value === 'yes')?.n || 0;
   const noData = counts.total === 0;
+  // When every data point behind a number is a baseline estimate, say so next to the number.
+  const ftEstimated = counts.ft_count > 0 && counts.ft_estimate_count === counts.ft_count;
+  const internEstimated = internship.n > 0 && counts.intern_estimate_count === internship.n;
 
   return (
     <div className="container page">
@@ -58,9 +61,12 @@ export default function Company() {
             </div>
           )}
         </div>
-        <Link to={`/add-salary?company=${company.slug}`} className="btn btn-primary ch-cta">
-          <PlusIcon size={16} /> Add a {company.name.split(' (')[0]} salary
-        </Link>
+        <div className="ch-cta">
+          <Link to={`/add-salary?company=${company.slug}`} className="btn btn-primary">
+            <PlusIcon size={16} /> Add a {company.name.split(' (')[0]} salary
+          </Link>
+          <Link to={`/compare?a=${company.slug}`} className="btn btn-ghost">Compare</Link>
+        </div>
       </section>
 
       {noData ? (
@@ -75,22 +81,22 @@ export default function Company() {
         <>
           <div className="stat-grid">
             <div className="stat">
-              <span className="stat-label">Median total comp</span>
+              <span className="stat-label">Median total comp {ftEstimated && <EstimateBadge />}</span>
               <span className="stat-value">{counts.ft_count ? <Blur>{money(counts.median_tc ?? fakeMoney(slug))}</Blur> : '—'}</span>
-              <span className="stat-foot">{plural(counts.ft_count, 'full-time salary', 'full-time salaries')}</span>
+              <span className="stat-foot">{basis(counts.ft_count, counts.ft_estimate_count, 'full-time report')}</span>
             </div>
             <div className="stat">
-              <span className="stat-label">Roles requiring a clearance</span>
+              <span className="stat-label">Roles requiring a clearance {ftEstimated && <EstimateBadge />}</span>
               <span className="stat-value">{ftClearanceTotal ? pct(cleared / ftClearanceTotal) : '—'}</span>
-              <span className="stat-foot">{ftClearanceTotal ? `${cleared} of ${ftClearanceTotal} full-time` : 'No full-time data'}</span>
+              <span className="stat-foot">{ftClearanceTotal ? `${cleared} of ${ftClearanceTotal} full-time roles` : 'No full-time data'}</span>
             </div>
             <div className="stat">
-              <span className="stat-label">Interns sponsored for a clearance</span>
+              <span className="stat-label">Interns sponsored for a clearance {internEstimated && <EstimateBadge />}</span>
               <span className="stat-value">{internship.n ? pct(internship.sponsored / internship.n) : '—'}</span>
-              <span className="stat-foot">{plural(internship.n, 'internship report')}</span>
+              <span className="stat-foot">{basis(internship.n, counts.intern_estimate_count, 'internship report')}</span>
             </div>
             <div className="stat">
-              <span className="stat-label">On a 9/80 schedule</span>
+              <span className="stat-label">On a 9/80 schedule {ftEstimated && <EstimateBadge />}</span>
               <span className="stat-value">{counts.ft_count ? pct(counts.nine_eighty / counts.ft_count) : '—'}</span>
               <span className="stat-foot">Every other Friday off</span>
             </div>
@@ -126,7 +132,7 @@ export default function Company() {
                         </span>
                       ))}
                     </div>
-                    <span className="sub">{plural(r.n, 'data point')}</span>
+                    <span className="sub">{plural(r.n, 'data point')}{ftEstimated ? ' · estimates' : ''}</span>
                   </div>
                 ))}
               </div>
@@ -141,7 +147,7 @@ export default function Company() {
           <div className="grid-2">
             <section className="card">
               <h2>Clearances for full-time roles</h2>
-              <p className="card-sub">What clearance level reported roles required.</p>
+              <p className="card-sub">What clearance level full-time roles required. Based on {basis(counts.ft_count, counts.ft_estimate_count, 'report').toLowerCase()}.</p>
               {ftClearanceTotal === 0 ? <p className="muted">No full-time data yet.</p> : (
                 <div className="dist">
                   {clearance.map((r) => (
@@ -175,7 +181,7 @@ export default function Company() {
 
             <section className="card">
               <h2>Internships</h2>
-              <p className="card-sub">Pay and clearance sponsorship for interns and co-ops.</p>
+              <p className="card-sub">Pay and clearance sponsorship for interns and co-ops. Based on {basis(internship.n, counts.intern_estimate_count, 'report').toLowerCase()}.</p>
               {internship.n === 0 ? (
                 <p className="muted">No internship reports yet. <Link to={`/add-salary?company=${slug}&type=intern`}>Add yours</Link>.</p>
               ) : (

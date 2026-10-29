@@ -10,7 +10,9 @@
   "scripts": {
     "dev": "concurrently -k -n api,web -c blue,green \"node --watch server/index.js\" \"vite\"",
     "build": "vite build",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "db:backup": "node scripts/db-backup.mjs",
+    "db:restore": "node scripts/db-restore.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.17",

@@ -17,6 +17,7 @@ export default function Companies() {
   const tag = params.get('tag') || '';
   const area = params.get('area') || '';
   const hq = params.get('hq') === '1';
+  const withData = params.get('data') === '1';
   const sort = params.get('sort') || 'data';
 
   const set = (key, value) => {
@@ -34,7 +35,8 @@ export default function Companies() {
       (!size || c.size === size) &&
       (!tag || c.tags.includes(tag)) &&
       (!area || c.area === area) &&
-      (!hq || c.hq),
+      (!hq || c.hq) &&
+      (!withData || c.salary_count > 0),
     );
     const sorters = {
       data: (a, b) => b.salary_count - a.salary_count || a.name.localeCompare(b.name),
@@ -43,7 +45,7 @@ export default function Companies() {
       clearance: (a, b) => (b.clearance_rate ?? -1) - (a.clearance_rate ?? -1),
     };
     return list.sort(sorters[sort] || sorters.data);
-  }, [companies, q, size, tag, area, hq, sort]);
+  }, [companies, q, size, tag, area, hq, withData, sort]);
 
   return (
     <div className="container page">
@@ -83,6 +85,9 @@ export default function Companies() {
         <label className="check">
           <input type="checkbox" checked={hq} onChange={(e) => set('hq', e.target.checked ? '1' : '')} /> HQ in Huntsville
         </label>
+        <label className="check">
+          <input type="checkbox" checked={withData} onChange={(e) => set('data', e.target.checked ? '1' : '')} /> Has salary data
+        </label>
       </div>
 
       {!companies ? <Spinner /> : filtered.length === 0 ? (
@@ -108,7 +113,7 @@ export default function Companies() {
                 <div className="cc-foot">
                   {c.salary_count > 0 ? (
                     <>
-                      <span><strong>{c.salary_count}</strong> data points</span>
+                      <span><strong>{c.salary_count}</strong> {c.estimate_count === c.salary_count ? 'estimates' : 'data points'}</span>
                       {c.ft_count > 0 && <span>Median <strong><Blur>{money(c.median_tc ?? fakeMoney(c.slug))}</Blur></strong></span>}
                       {c.clearance_rate !== null && <span><strong>{pct(c.clearance_rate)}</strong> cleared</span>}
                     </>

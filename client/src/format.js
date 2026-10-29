@@ -24,3 +24,12 @@ export function fakeMoney(seed, lo = 80_000, hi = 190_000) {
   for (const c of String(seed)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return lo + (h % (hi - lo));
 }
+
+// Says where a number comes from: community reports, baseline estimates, or both.
+export function basis(total, estimates, noun = 'report') {
+  const user = total - estimates;
+  if (!total) return `No ${noun}s yet`;
+  if (!estimates) return plural(user, noun);
+  if (!user) return plural(estimates, 'estimate');
+  return `${plural(user, noun)} + ${plural(estimates, 'estimate')}`;
+}

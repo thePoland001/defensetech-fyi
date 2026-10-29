@@ -1,29 +1,11 @@
 // Options shared by the API (validation) and the client (forms, labels).
 
+// The titles the site tracks. Kept deliberately short; management roles are left out for now.
 export const JOB_FAMILIES = [
   'Software Engineer',
-  'Embedded Software Engineer',
   'Systems Engineer',
-  'Electrical Engineer',
-  'Hardware / FPGA Engineer',
-  'RF / Antenna Engineer',
-  'Mechanical Engineer',
   'Aerospace Engineer',
-  'Test Engineer',
-  'Cybersecurity Engineer',
-  'Data Scientist / ML',
-  'Modeling & Simulation Engineer',
-  'Manufacturing Engineer',
-  'Quality / Reliability Engineer',
-  'Program Manager',
-  'Project Manager',
-  'Product Manager',
-  'Business / Financial Analyst',
-  'Logistics / Supply Chain',
-  'IT / Network Engineer',
-  'Engineering Technician',
-  'Contracts / Procurement',
-  'Other',
+  'Mechanical Engineer',
 ];
 
 export const LEVELS = [
@@ -84,3 +66,13 @@ export function slugify(name) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+// Why an entry is being reported. Keys are stored in the flags table.
+export const FLAG_REASONS = {
+  fake: 'Looks fake or implausible',
+  wrong_company: 'Wrong company or role',
+  personal: 'Contains personal or identifying info',
+  classified: 'Mentions classified or sensitive program details',
+  duplicate: 'Duplicate entry',
+  other: 'Something else',
+};

@@ -5,6 +5,7 @@ import { Bar, Blur, CompanyLogo, Locked, SizeBadge, Spinner } from '../component
 import { ArrowRight, InfoIcon } from '../components/Icons.jsx';
 import SalaryTable, { FakeSalaryRows } from '../components/SalaryTable.jsx';
 import { hourly, pct } from '../format.js';
+import EstimateNotice from '../components/EstimateNotice.jsx';
 import { usePageTitle } from './usePageTitle.js';
 
 export default function Internships() {
@@ -35,6 +36,8 @@ export default function Internships() {
         <Link to="/add-salary?type=intern" className="btn btn-primary">Add your internship</Link>
       </div>
 
+      {data && <EstimateNotice companies={data.companies} field="intern" />}
+
       <div className="notice">
         <InfoIcon size={16} />
         <span>"Sponsored" means the company submitted the intern's clearance paperwork (SF-86) and paid for the investigation, even if it wasn't adjudicated before the internship ended.</span>
@@ -45,14 +48,14 @@ export default function Internships() {
           <h2>Intern clearance sponsorship by company</h2>
           <div className="segmented small">
             <button className={sort === 'rate' ? 'active' : ''} onClick={() => setSort('rate')}>Sponsorship rate</button>
-            <button className={sort === 'n' ? 'active' : ''} onClick={() => setSort('n')}>Most reports</button>
+            <button className={sort === 'n' ? 'active' : ''} onClick={() => setSort('n')}>Most data</button>
           </div>
         </div>
-        {loading ? <Spinner /> : rows.length === 0 ? <p className="muted">No internship reports yet.</p> : (
+        {loading ? <Spinner /> : rows.length === 0 ? <p className="muted">No internship data yet.</p> : (
           <div className="table-wrap">
             <table className="data-table">
               <thead>
-                <tr><th>Company</th><th className="num">Reports</th><th>Clearance sponsored</th><th className="num">Hourly (median)</th></tr>
+                <tr><th>Company</th><th className="num">Data points</th><th>Clearance sponsored</th><th className="num">Hourly (median)</th></tr>
               </thead>
               <tbody>
                 {rows.map((c) => (
@@ -64,7 +67,7 @@ export default function Internships() {
                         <SizeBadge size={c.size} />
                       </div>
                     </td>
-                    <td className="num">{c.intern_n}</td>
+                    <td className="num">{c.intern_n}{c.intern_est === c.intern_n && <span className="sub">estimates</span>}</td>
                     <td><div className="bar-cell"><Bar value={c.intern_sponsor_rate} tone="green" /><strong>{pct(c.intern_sponsor_rate)}</strong></div></td>
                     <td className="num"><Blur>{hourly(c.intern_median_hourly ?? 27)}</Blur></td>
                   </tr>

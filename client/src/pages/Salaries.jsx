@@ -62,8 +62,8 @@ export default function Salaries({ defaultType = 'full_time' }) {
           <option value="">All companies</option>
           {companies?.filter((c) => c.salary_count > 0).map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
         </select>
-        <select value={params.get('title') || ''} onChange={(e) => set('title', e.target.value)} aria-label="Job family">
-          <option value="">All job families</option>
+        <select value={params.get('title') || ''} onChange={(e) => set('title', e.target.value)} aria-label="Title">
+          <option value="">All titles</option>
           {JOB_FAMILIES.map((t) => <option key={t}>{t}</option>)}
         </select>
         {!intern && (
