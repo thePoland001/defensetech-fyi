@@ -1,0 +1,96 @@
+company_slug	levels_slug	title	scope	level_code	our_level	median_total_comp	retrieved
+lockheed-martin	lockheed-martin	Software Engineer	huntsville	E1	L1	91314	2026-11-01
+lockheed-martin	lockheed-martin	Software Engineer	huntsville	E2	L2	113957	2026-11-01
+lockheed-martin	lockheed-martin	Software Engineer	huntsville	E3	L3	148032	2026-11-01
+lockheed-martin	lockheed-martin	Software Engineer	huntsville	E4	L4	165400	2026-11-01
+lockheed-martin	lockheed-martin	Software Engineer	huntsville	E5	L5	196875	2026-11-01
+northrop-grumman	northrop-grumman	Software Engineer	huntsville	T1	L1	94162	2026-11-01
+northrop-grumman	northrop-grumman	Software Engineer	huntsville	T2	L2	106465	2026-11-01
+northrop-grumman	northrop-grumman	Software Engineer	huntsville	T3	L3	136941	2026-11-01
+northrop-grumman	northrop-grumman	Software Engineer	huntsville	T4	L4	165165	2026-11-01
+northrop-grumman	northrop-grumman	Software Engineer	huntsville	T5a	L5	216290	2026-11-01
+boeing	boeing	Software Engineer	huntsville	L1	L1	97281	2026-11-01
+boeing	boeing	Software Engineer	huntsville	L2	L2	117263	2026-11-01
+boeing	boeing	Software Engineer	huntsville	L3	L3	152290	2026-11-01
+boeing	boeing	Software Engineer	huntsville	L4	L4	173950	2026-11-01
+boeing	boeing	Software Engineer	huntsville	L5	L5	192175	2026-11-01
+raytheon-rtx	raytheon	Software Engineer	huntsville	P1	L1	95154	2026-11-01
+raytheon-rtx	raytheon	Software Engineer	huntsville	P2	L2	105336	2026-11-01
+raytheon-rtx	raytheon	Software Engineer	huntsville	P3	L3	138497	2026-11-01
+raytheon-rtx	raytheon	Software Engineer	huntsville	P4	L4	158333	2026-11-01
+raytheon-rtx	raytheon	Software Engineer	huntsville	P5	L5	210333	2026-11-01
+leidos	leidos	Software Engineer	huntsville	T1	L1	84417	2026-11-01
+leidos	leidos	Software Engineer	huntsville	T2	L2	108356	2026-11-01
+leidos	leidos	Software Engineer	huntsville	T3	L3	137550	2026-11-01
+leidos	leidos	Software Engineer	huntsville	T4	L4	163309	2026-11-01
+leidos	leidos	Software Engineer	huntsville	T5	L5	205714	2026-11-01
+anduril-industries	anduril-industries	Software Engineer	national	IC2	L1	230389	2026-11-01
+anduril-industries	anduril-industries	Software Engineer	national	IC3	L2	276825	2026-11-01
+anduril-industries	anduril-industries	Software Engineer	national	IC4	L3	330592	2026-11-01
+anduril-industries	anduril-industries	Software Engineer	national	IC5	L4	371735	2026-11-01
+anduril-industries	anduril-industries	Software Engineer	national	IC6	L5	523125	2026-11-01
+l3harris-technologies	l3harris	Software Engineer	huntsville	Associate	L1	93117	2026-11-01
+l3harris-technologies	l3harris	Software Engineer	huntsville	Senior Associate	L2	115204	2026-11-01
+l3harris-technologies	l3harris	Software Engineer	huntsville	Specialist	L3	122142	2026-11-01
+l3harris-technologies	l3harris	Software Engineer	huntsville	Senior Specialist	L3	133981	2026-11-01
+l3harris-technologies	l3harris	Software Engineer	huntsville	Lead	L4	161167	2026-11-01
+l3harris-technologies	l3harris	Software Engineer	huntsville	Scientist	L5	181375	2026-11-01
+saic	saic	Software Engineer	huntsville	L1	L1	89768	2026-11-01
+saic	saic	Software Engineer	huntsville	L2	L2	104376	2026-11-01
+saic	saic	Software Engineer	huntsville	L3	L3	137571	2026-11-01
+saic	saic	Software Engineer	huntsville	L4	L4	180000	2026-11-01
+saic	saic	Software Engineer	huntsville	L5	L5	187000	2026-11-01
+booz-allen-hamilton	booz-allen-hamilton	Software Engineer	huntsville	Engineer	L1	106352	2026-11-01
+booz-allen-hamilton	booz-allen-hamilton	Software Engineer	huntsville	Staff Engineer	L2	125613	2026-11-01
+booz-allen-hamilton	booz-allen-hamilton	Software Engineer	huntsville	Lead Engineer	L3	163570	2026-11-01
+booz-allen-hamilton	booz-allen-hamilton	Software Engineer	huntsville	Senior Lead Engineer	L4	175900	2026-11-01
+booz-allen-hamilton	booz-allen-hamilton	Software Engineer	huntsville	Chief Engineer	L5	242400	2026-11-01
+bae-systems	bae-systems	Software Engineer	huntsville	G08	L1	93537	2026-11-01
+bae-systems	bae-systems	Software Engineer	huntsville	G09	L2	108547	2026-11-01
+bae-systems	bae-systems	Software Engineer	huntsville	G10	L3	131956	2026-11-01
+bae-systems	bae-systems	Software Engineer	huntsville	G11	L4	150675	2026-11-01
+bae-systems	bae-systems	Software Engineer	huntsville	G12	L5	169579	2026-11-01
+blue-origin	blue-origin	Software Engineer	huntsville	L1	L1	129741	2026-11-01
+blue-origin	blue-origin	Software Engineer	huntsville	L2	L2	169237	2026-11-01
+blue-origin	blue-origin	Software Engineer	huntsville	L3	L3	183035	2026-11-01
+blue-origin	blue-origin	Software Engineer	huntsville	L4	L4	246982	2026-11-01
+blue-origin	blue-origin	Software Engineer	huntsville	L5	L5	267000	2026-11-01
+lockheed-martin	lockheed-martin	Mechanical Engineer	huntsville	E1	L1	78333	2026-11-01
+lockheed-martin	lockheed-martin	Mechanical Engineer	huntsville	E2	L2	103453	2026-11-01
+lockheed-martin	lockheed-martin	Mechanical Engineer	huntsville	E3	L3	138718	2026-11-01
+lockheed-martin	lockheed-martin	Mechanical Engineer	huntsville	E4	L4	145575	2026-11-01
+lockheed-martin	lockheed-martin	Mechanical Engineer	huntsville	E5	L5	206267	2026-11-01
+caci-international	caci-international	Software Engineer	huntsville	T1	L1	89417	2026-11-01
+caci-international	caci-international	Software Engineer	huntsville	T2	L2	118206	2026-11-01
+caci-international	caci-international	Software Engineer	huntsville	T3	L3	155891	2026-11-01
+caci-international	caci-international	Software Engineer	huntsville	T4	L4	180266	2026-11-01
+caci-international	caci-international	Software Engineer	huntsville	T5	L5	215317	2026-11-01
+kbr	kbr	Software Engineer	huntsville	all	all	109750	2026-11-01
+parsons	parsons	Software Engineer	huntsville	all	all	115000	2026-11-01
+general-dynamics-mission-systems	general-dynamics	Software Engineer	huntsville	all	all	96500	2026-11-01
+palantir-technologies	palantir	Software Engineer	huntsville	all	all	252000	2026-11-01
+peraton	peraton	Software Engineer	huntsville	Associate	L1	91812	2026-11-01
+peraton	peraton	Software Engineer	huntsville	Senior Associate	L2	110964	2026-11-01
+peraton	peraton	Software Engineer	huntsville	Lead Associate	L3	123667	2026-11-01
+peraton	peraton	Software Engineer	huntsville	Advisor	L4	149550	2026-11-01
+peraton	peraton	Software Engineer	huntsville	Senior Advisor	L5	218083	2026-11-01
+lockheed-martin	lockheed-martin	Systems Engineer	huntsville	E1	L1	84236	2026-11-01
+lockheed-martin	lockheed-martin	Systems Engineer	huntsville	E2	L2	100726	2026-11-01
+lockheed-martin	lockheed-martin	Systems Engineer	huntsville	E3	L3	108250	2026-11-01
+lockheed-martin	lockheed-martin	Systems Engineer	huntsville	E4	L4	162950	2026-11-01
+boeing	boeing	Aerospace Engineer	huntsville	L1	L1	91602	2026-11-01
+boeing	boeing	Aerospace Engineer	huntsville	L2	L2	108693	2026-11-01
+boeing	boeing	Aerospace Engineer	huntsville	L3	L3	124955	2026-11-01
+boeing	boeing	Aerospace Engineer	huntsville	L4	L4	165741	2026-11-01
+boeing	boeing	Aerospace Engineer	huntsville	L5	L5	292400	2026-11-01
+amentum	amentum	Software Engineer	huntsville	all	all	85000	2026-11-01
+mantech	mantech	Software Engineer	huntsville	all	all	140000	2026-11-01
+teledyne-brown-engineering	teledyne-technologies	Software Engineer	huntsville	all	all	116000	2026-11-01
+northrop-grumman	northrop-grumman	Systems Engineer	huntsville	T1	L1	83833	2026-11-01
+northrop-grumman	northrop-grumman	Systems Engineer	huntsville	T2	L2	103286	2026-11-01
+textron-systems	textron	Software Engineer	huntsville	all	all	93500	2026-11-01
+general-atomics-electromagnetic-systems	general-atomics	Software Engineer	huntsville	L1	L1	103656	2026-11-01
+general-atomics-electromagnetic-systems	general-atomics	Software Engineer	huntsville	L2	L2	118460	2026-11-01
+general-atomics-electromagnetic-systems	general-atomics	Software Engineer	huntsville	L3	L3	124057	2026-11-01
+general-atomics-electromagnetic-systems	general-atomics	Software Engineer	huntsville	L4	L4	140917	2026-11-01
+general-atomics-electromagnetic-systems	general-atomics	Software Engineer	huntsville	L5	L5	151958	2026-11-01

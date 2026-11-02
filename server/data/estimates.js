@@ -1,14 +1,15 @@
 // Baseline compensation estimates for large defense companies in Huntsville.
 //
 // These are NOT user submissions. They are generated from publicly reported compensation
-// ranges (levels.fyi, company job postings with pay transparency ranges, and BLS data for
+// ranges (levels.fyi Huntsville medians, company job postings with pay-transparency ranges, and BLS data for
 // the Huntsville MSA) and are always shown with an "Estimate" badge in the UI.
 // Bump ESTIMATES_VERSION whenever this file changes so the server re-seeds them.
 
-export const ESTIMATES_VERSION = 5;
+export const ESTIMATES_VERSION = 6;
 
 // Base salary ladders are for a Software Engineer in Huntsville at levels L1-L5; the other
-// titles are scaled by ROLE_FACTORS. bonus = fraction of base, stock = $/yr.
+// titles are scaled by ROLE_FACTORS. Where levels.fyi has Huntsville data, CALIBRATION below
+// overrides the ladder so modeled total comp lands on those medians. bonus = fraction of base, stock = $/yr.
 // Each company's mix of the four tracked titles. Repeats weight the mix (IT shops are mostly
 // software and systems; space and rocket shops lean mechanical and aerospace).
 const SW = 'Software Engineer';
@@ -31,13 +32,16 @@ const B_PRIME = [0, 0.02, 0.03, 0.05, 0.08];
 const B_SMALL = [0, 0.01, 0.03, 0.04, 0.07];
 
 const LM = ['E1 (Associate)', 'E2', 'E3 (Senior)', 'E4 (Staff)', 'E5 (Principal)'];
-const NG = ['Level 1 (Associate)', 'Level 2', 'Level 3 (Principal)', 'Level 4 (Sr. Principal)', 'Level 5 (Staff)'];
+const NG = ['T1', 'T2', 'T3', 'T4', 'T5'];
 const NUM = ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'];
 const RTX = ['P1 (Engineer I)', 'P2 (Engineer II)', 'P3 (Engineer III)', 'P4 (Senior)', 'P5 (Principal)'];
-const L3H = ['Associate', 'Specialist', 'Senior Specialist', 'Lead', 'Principal'];
+const L3H = ['Associate', 'Senior Associate', 'Specialist', 'Lead', 'Scientist'];
 const ROMAN = ['I', 'II', 'III (Senior)', 'IV (Lead)', 'V (Principal)'];
-const BOOZ = ['Consultant', 'Senior Consultant', 'Lead Associate', 'Associate', 'Senior Associate'];
+const BOOZ = ['Engineer', 'Staff Engineer', 'Lead Engineer', 'Senior Lead Engineer', 'Chief Engineer'];
 const TECH = ['New Grad', 'Mid', 'Senior', 'Staff', 'Senior Staff'];
+const TCODE = ['T1', 'T2', 'T3', 'T4', 'T5'];
+const BAE = ['G08', 'G09', 'G10', 'G11', 'G12'];
+const PERATON = ['Associate', 'Senior Associate', 'Lead Associate', 'Advisor', 'Senior Advisor'];
 
 // slug -> config
 export const ESTIMATE_CONFIG = {
@@ -50,17 +54,17 @@ export const ESTIMATE_CONFIG = {
   'aerojet-rocketdyne-l3harris': { base: L(84, 100, 121, 143, 168), bonus: [0.01, 0.02, 0.04, 0.06, 0.08], ladder: L3H, roles: [AERO, MECH, SYS, AERO], clear: CLEAR_PRIME, intern: [24, 32], sponsor: 0.3, n: 14 },
   'general-dynamics-mission-systems': { base: L(80, 97, 117, 138, 160), bonus: B_SMALL, ladder: ROMAN, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.35, n: 14 },
   'general-dynamics-information-technology-gdit': { base: L(80, 98, 118, 140, 162), bonus: B_SMALL, ladder: ROMAN, roles: IT_ROLES, clear: CLEAR_IT, intern: [21, 29], sponsor: 0.25, n: 16 },
-  'bae-systems': { base: L(82, 98, 118, 140, 163), bonus: [0.01, 0.02, 0.03, 0.05, 0.07], ladder: ROMAN, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.35, n: 18 },
-  leidos: { base: L(82, 100, 121, 145, 170), bonus: [0.01, 0.02, 0.04, 0.06, 0.09], ladder: NUM, roles: [SW, SYS, SW, AERO], clear: CLEAR_IT, intern: [22, 30], sponsor: 0.35, n: 20 },
+  'bae-systems': { base: L(82, 98, 118, 140, 163), bonus: [0.01, 0.02, 0.03, 0.05, 0.07], ladder: BAE, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.35, n: 18 },
+  leidos: { base: L(82, 100, 121, 145, 170), bonus: [0.01, 0.02, 0.04, 0.06, 0.09], ladder: TCODE, roles: [SW, SYS, SW, AERO], clear: CLEAR_IT, intern: [22, 30], sponsor: 0.35, n: 20 },
   'dynetics-leidos': { base: L(85, 104, 126, 150, 176), bonus: [0.03, 0.04, 0.06, 0.08, 0.1], ladder: NUM, roles: [SW, SYS, AERO, MECH, SYS, AERO], clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.55, n: 24 },
   saic: { base: L(82, 100, 122, 147, 172), bonus: [0.01, 0.02, 0.03, 0.05, 0.08], ladder: NUM, roles: SERVICES_ROLES, clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 20 },
   'booz-allen-hamilton': { base: L(84, 103, 127, 152, 182), bonus: [0.03, 0.04, 0.06, 0.08, 0.11], ladder: BOOZ, roles: IT_ROLES, clear: CLEAR_IT, intern: [24, 32], sponsor: 0.35, n: 20 },
-  'caci-international': { base: L(80, 98, 119, 142, 166), bonus: [0.01, 0.02, 0.04, 0.05, 0.08], ladder: ROMAN, roles: IT_ROLES, clear: CLEAR_IT, intern: [22, 29], sponsor: 0.3, n: 16 },
+  'caci-international': { base: L(80, 98, 119, 142, 166), bonus: [0.01, 0.02, 0.04, 0.05, 0.08], ladder: TCODE, roles: IT_ROLES, clear: CLEAR_IT, intern: [22, 29], sponsor: 0.3, n: 16 },
   kbr: { base: L(80, 97, 117, 139, 162), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES, clear: CLEAR_PRIME, intern: [21, 28], sponsor: 0.3, n: 16 },
   parsons: { base: L(81, 98, 118, 140, 163), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES, clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.3, n: 16 },
   amentum: { base: L(77, 93, 113, 134, 156), bonus: B_SMALL, ladder: ROMAN, roles: [SYS, AERO, SW, MECH], clear: CLEAR_PRIME, intern: [20, 27], sponsor: 0.2, n: 16 },
   mantech: { base: L(80, 98, 118, 140, 163), bonus: B_SMALL, ladder: ROMAN, roles: IT_ROLES, clear: CLEAR_IT, intern: [21, 28], sponsor: 0.25, n: 14 },
-  peraton: { base: L(81, 99, 120, 143, 167), bonus: B_SMALL, ladder: ROMAN, roles: [SW, SYS, SW, AERO], clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 14 },
+  peraton: { base: L(81, 99, 120, 143, 167), bonus: B_SMALL, ladder: PERATON, roles: [SW, SYS, SW, AERO], clear: CLEAR_IT, intern: [22, 30], sponsor: 0.3, n: 14 },
   'hii-mission-technologies-camber': { base: L(78, 95, 115, 137, 159), bonus: B_SMALL, ladder: ROMAN, roles: SERVICES_ROLES, clear: CLEAR_PRIME, intern: [21, 28], sponsor: 0.3, n: 14 },
   'teledyne-brown-engineering': { base: L(77, 93, 112, 133, 155), bonus: B_SMALL, ladder: ROMAN, roles: [SYS, MECH, AERO, SW], clear: CLEAR_PRIME, intern: [20, 27], sponsor: 0.35, n: 16 },
   'textron-systems': { base: L(81, 98, 118, 140, 163), bonus: [0.02, 0.03, 0.04, 0.06, 0.08], ladder: ROMAN, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [23, 31], sponsor: 0.3, n: 12 },
@@ -76,12 +80,78 @@ export const ESTIMATE_CONFIG = {
   moog: { base: L(80, 96, 115, 137, 160), bonus: [0.01, 0.02, 0.04, 0.05, 0.07], ladder: ROMAN, roles: [MECH, SYS, SW, AERO], clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.2, n: 12 },
 };
 
+// Median ratio of each title's Huntsville total comp to software engineers at the same company
+// and level, from levels.fyi (Lockheed, Northrop and Boeing pages, Nov 2026).
 export const ROLE_FACTORS = {
   [SW]: 1.0,
-  [SYS]: 0.99,
-  [AERO]: 0.97,
-  [MECH]: 0.94,
+  [SYS]: 0.92,
+  [AERO]: 0.94,
+  [MECH]: 0.91,
 };
+
+// Huntsville-area software engineer total comp from levels.fyi (Nov 2026; raw figures in
+// data-pipeline/raw/levels_huntsville.tsv).
+//   tc:      median total comp at L1-L5. The base ladder is solved so modeled TC hits these.
+//   overall: only an all-levels median was available. The ladder is scaled so its L2-L3
+//            midpoint (where most reports sit) matches.
+// Anduril has no Huntsville figures; its national medians (IC2-IC6) are discounted 15% for
+// Huntsville, keeping the equity-heavy mix.
+export const CALIBRATION = {
+  'lockheed-martin': { tc: L(91.3, 114, 148, 165.4, 196.9) },
+  'northrop-grumman': { tc: L(94.2, 106.5, 136.9, 165.2, 216.3) },
+  boeing: { tc: L(97.3, 117.3, 152.3, 174, 192.2) },
+  'raytheon-rtx': { tc: L(95.2, 105.3, 138.5, 158.3, 210.3) },
+  leidos: { tc: L(84.4, 108.4, 137.6, 163.3, 205.7) },
+  'l3harris-technologies': { tc: L(93.1, 115.2, 128, 161.2, 181.4) },
+  saic: { tc: L(89.8, 104.4, 137.6, 180, 187) },
+  'booz-allen-hamilton': { tc: L(106.4, 125.6, 163.6, 175.9, 242.4) },
+  'bae-systems': { tc: L(93.5, 108.5, 132, 150.7, 169.6) },
+  'blue-origin': { tc: L(129.7, 169.2, 183, 247, 267) },
+  'caci-international': { tc: L(89.4, 118.2, 155.9, 180.3, 215.3) },
+  peraton: { tc: L(91.8, 111, 123.7, 149.6, 218.1) },
+  'general-atomics-electromagnetic-systems': { tc: L(103.7, 118.5, 124.1, 140.9, 152) },
+  'general-atomics-aeronautical-systems': { tc: L(103.7, 118.5, 124.1, 140.9, 152) },
+  'anduril-industries': { tc: L(195.8, 235.3, 281, 316, 444.7) },
+  kbr: { overall: 109750 },
+  parsons: { overall: 115000 },
+  'general-dynamics-mission-systems': { overall: 96500 },
+  amentum: { overall: 85000 },
+  mantech: { overall: 140000 },
+  'teledyne-brown-engineering': { overall: 116000 },
+  'textron-systems': { overall: 93500 },
+  'palantir-technologies': { overall: 252000 },
+};
+
+// Expected multipliers the generator applies on top of base, so a TC target can be turned
+// back into a base salary.
+function expectedPremium(clear) {
+  const total = Object.values(clear).reduce((s, w) => s + w, 0);
+  return Object.entries(clear).reduce((s, [k, w]) => s + (w / total) * CLEARANCE_PREMIUM[k], 0);
+}
+function expectedStock(cfg, lvl) {
+  if (cfg.stock) return cfg.stock[lvl] * 1.025; // mean of the 0.75-1.3 jitter
+  if (cfg.stock5 && lvl === 4) return cfg.stock5 * 0.6 * 1.05; // granted 60% of the time
+  return 0;
+}
+const modeledTc = (cfg, lvl, base) => base * expectedPremium(cfg.clear) * (1 + 0.8 * cfg.bonus[lvl]) + expectedStock(cfg, lvl);
+
+// Returns a copy of cfg whose base ladder reproduces the calibration targets.
+function calibrated(slug, cfg) {
+  const cal = CALIBRATION[slug];
+  if (!cal) return cfg;
+  if (cal.tc) {
+    const base = cal.tc.map((tc, lvl) => {
+      // Equity-heavy companies keep their stock share: scale stock with the TC target.
+      const stockShare = cfg.stock ? expectedStock(cfg, lvl) / modeledTc(cfg, lvl, cfg.base[lvl]) : 0;
+      return (tc * (1 - stockShare)) / (expectedPremium(cfg.clear) * (1 + 0.8 * cfg.bonus[lvl]));
+    });
+    const stock = cfg.stock && cal.tc.map((tc, lvl) => tc * (expectedStock(cfg, lvl) / modeledTc(cfg, lvl, cfg.base[lvl])) / 1.025);
+    return { ...cfg, base, ...(stock ? { stock } : {}) };
+  }
+  const mid = (modeledTc(cfg, 1, cfg.base[1]) + modeledTc(cfg, 2, cfg.base[2])) / 2;
+  const k = cal.overall / mid;
+  return { ...cfg, base: cfg.base.map((b) => b * k), ...(cfg.stock ? { stock: cfg.stock.map((x) => x * k) } : {}) };
+}
 
 // Typical Huntsville pay premium for holding (and using) a clearance, relative to uncleared.
 const CLEARANCE_PREMIUM = { none: 1, 'Public Trust': 1.01, Secret: 1.04, 'Top Secret': 1.08, 'TS/SCI': 1.13, 'TS/SCI + Poly': 1.2 };
@@ -123,7 +193,8 @@ function pickWeighted(rand, weights) {
 // Returns rows ready to insert into `salaries`, keyed by company slug.
 export function buildEstimates(now = new Date()) {
   const rows = [];
-  for (const [slug, cfg] of Object.entries(ESTIMATE_CONFIG)) {
+  for (const [slug, raw] of Object.entries(ESTIMATE_CONFIG)) {
+    const cfg = calibrated(slug, raw);
     const rand = mulberry32(hash(slug));
     const between = (a, b) => a + (b - a) * rand();
     const daysAgo = () => new Date(now.getTime() - Math.floor(between(5, 540)) * 86400000);
