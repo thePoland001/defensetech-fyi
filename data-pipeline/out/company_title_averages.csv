@@ -1,0 +1,6 @@
+company_slug,company_name,job_title,job_family,location,average_pay,salary_type,report_count,retrieved,source
+dynetics-leidos,Dynetics (Leidos),Software Engineer,Software Engineer,"Huntsville, AL",76451,YEARLY,15,2026-11-01,indeed_company_salaries
+general-dynamics-information-technology-gdit,General Dynamics Information Technology (GDIT),Software Engineer,Software Engineer,"Huntsville, AL",64196,YEARLY,3,2026-11-01,indeed_company_salaries
+l3harris-technologies,L3Harris Technologies,Mechanical Engineer,Mechanical Engineer,"Huntsville, AL",126908,YEARLY,7,2026-11-01,indeed_company_salaries
+hii-mission-technologies-camber,HII Mission Technologies (Camber),Systems Engineer,Systems Engineer,"Huntsville, AL",125963,YEARLY,6,2026-11-01,indeed_company_salaries
+lockheed-martin,Lockheed Martin,Systems Engineer,Systems Engineer,"Huntsville, AL",127683,YEARLY,19,2026-10-27,indeed_company_salaries

@@ -58,6 +58,7 @@ const ALIASES = {
   'sierra nevada corporation': 'sierra-nevada-company',
   'aerovironment': 'aerovironment-av',
   'hii': 'hii-mission-technologies-camber',
+  'dynetics': 'dynetics-leidos',
 };
 
 const norm = (s) =>
