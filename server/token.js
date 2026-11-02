@@ -3,10 +3,12 @@ import crypto from 'node:crypto';
 // Signed "unlock" token issued after someone contributes a salary. Stored in an httpOnly
 // cookie; the server refuses to return individual salary data without a valid one.
 
-const SECRET = process.env.SESSION_SECRET || 'dev-only-secret-change-me';
+// The fallback is public (this repo is open source), so production must set its own secret or
+// anyone could mint unlock cookies.
 if (!process.env.SESSION_SECRET && process.env.NODE_ENV === 'production') {
-  console.warn('[token] SESSION_SECRET is not set; unlock cookies are signed with an insecure default.');
+  throw new Error('SESSION_SECRET is not set. Set it to a long random string (Render generates one from render.yaml).');
 }
+const SECRET = process.env.SESSION_SECRET || 'dev-only-secret-change-me';
 const MAX_AGE_MS = 365 * 24 * 60 * 60 * 1000;
 
 export const COOKIE_NAME = 'dtfyi_unlock';
