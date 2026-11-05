@@ -5,7 +5,7 @@
 // the Huntsville MSA) and are always shown with an "Estimate" badge in the UI.
 // Bump ESTIMATES_VERSION whenever this file changes so the server re-seeds them.
 
-export const ESTIMATES_VERSION = 6;
+export const ESTIMATES_VERSION = 7;
 
 // Base salary ladders are for a Software Engineer in Huntsville at levels L1-L5; the other
 // titles are scaled by ROLE_FACTORS. Where levels.fyi has Huntsville data, CALIBRATION below
@@ -43,6 +43,10 @@ const TCODE = ['T1', 'T2', 'T3', 'T4', 'T5'];
 const BAE = ['G08', 'G09', 'G10', 'G11', 'G12'];
 const PERATON = ['Associate', 'Senior Associate', 'Lead Associate', 'Advisor', 'Senior Advisor'];
 
+// Mid-size firms share a starting ladder and a smaller sample; CALIBRATION sets their pay level.
+const mid = (roles, clear, extra) => ({ base: L(76, 92, 112, 133, 155), bonus: B_SMALL, ladder: ROMAN, roles, clear, intern: [20, 28], sponsor: 0.3, n: 10, spread: true, ...extra });
+const ENG_ROLES = [SYS, AERO, MECH, SW];
+
 // slug -> config
 export const ESTIMATE_CONFIG = {
   'lockheed-martin': { base: L(87, 106, 130, 152, 180), bonus: [0, 0.02, 0.04, 0.06, 0.09], stock5: 8000, ladder: LM, roles: PRIME_ROLES, clear: CLEAR_PRIME, intern: [25, 33], sponsor: 0.5, n: 26 },
@@ -78,6 +82,29 @@ export const ESTIMATE_CONFIG = {
   'cgi-federal': { base: L(76, 93, 113, 135, 158), bonus: [0.01, 0.02, 0.03, 0.04, 0.06], ladder: ['Associate Consultant', 'Consultant', 'Senior Consultant', 'Lead Analyst', 'Director'], roles: IT_ROLES, clear: CLEAR_IT, intern: [21, 28], sponsor: 0.1, n: 10 },
   v2x: { base: L(74, 90, 109, 130, 152), bonus: B_SMALL, ladder: ROMAN, roles: [SYS, SW], clear: CLEAR_PRIME, intern: [19, 26], sponsor: 0.2, n: 12 },
   moog: { base: L(80, 96, 115, 137, 160), bonus: [0.01, 0.02, 0.04, 0.05, 0.07], ladder: ROMAN, roles: [MECH, SYS, SW, AERO], clear: CLEAR_PRIME, intern: [22, 30], sponsor: 0.2, n: 12 },
+  'torch-technologies': mid(SERVICES_ROLES, CLEAR_PRIME),
+  peopletec: mid([SW, SYS, AERO, SW], CLEAR_PRIME),
+  'radiance-technologies': mid(PRIME_ROLES, CLEAR_TECH),
+  arcfield: mid(SERVICES_ROLES, CLEAR_PRIME),
+  draper: mid(PRIME_ROLES, CLEAR_TECH, { intern: [24, 32] }),
+  'the-aerospace-corporation': mid(ENG_ROLES, CLEAR_TECH, { intern: [24, 32] }),
+  battelle: mid(ENG_ROLES, CLEAR_TECH),
+  noblis: mid(IT_ROLES, CLEAR_IT),
+  'asrc-federal': mid(IT_ROLES, CLEAR_IT),
+  mitre: mid([SYS, SW, SW, AERO], CLEAR_IT, { ladder: ['Associate', 'Intermediate', 'Senior', 'Lead', 'Principal'], intern: [24, 32] }),
+  viasat: mid(TECH_ROLES, CLEAR_TECH, { ladder: ['Engineer 1', 'Engineer 2', 'Engineer 3', 'Staff', 'Senior Staff'], intern: [26, 36] }),
+  'aerovironment-av': mid([SW, AERO, MECH, SYS, SW], CLEAR_TECH, { intern: [24, 32] }),
+  'leonardo-drs': mid(PRIME_ROLES, CLEAR_PRIME),
+  lmi: mid(IT_ROLES, CLEAR_IT),
+  astrion: mid(SERVICES_ROLES, CLEAR_PRIME),
+  'parry-labs': mid(TECH_ROLES, CLEAR_PRIME),
+  'qinetiq-us': mid(SERVICES_ROLES, CLEAR_PRIME),
+  'scientific-research-corporation': mid(IT_ROLES, CLEAR_IT),
+  'american-systems': mid(SERVICES_ROLES, CLEAR_PRIME),
+  'sierra-nevada-company': mid(PRIME_ROLES, CLEAR_PRIME),
+  'systems-planning-analysis-spa': mid([SYS, SW, AERO], CLEAR_PRIME),
+  'applied-research-associates-ara': mid(ENG_ROLES, CLEAR_PRIME),
+  'elbit-systems-of-america': mid([SW, SYS, MECH, AERO], CLEAR_PRIME),
 };
 
 // Median ratio of each title's Huntsville total comp to software engineers at the same company
@@ -94,6 +121,8 @@ export const ROLE_FACTORS = {
 //   tc:      median total comp at L1-L5. The base ladder is solved so modeled TC hits these.
 //   overall: only an all-levels median was available. The ladder is scaled so its L2-L3
 //            midpoint (where most reports sit) matches.
+//   level:   with overall, the figure is one known level's package, so that level is matched
+//            instead of the midpoint.
 // Anduril has no Huntsville figures; its national medians (IC2-IC6) are discounted 15% for
 // Huntsville, keeping the equity-heavy mix.
 export const CALIBRATION = {
@@ -120,6 +149,30 @@ export const CALIBRATION = {
   'teledyne-brown-engineering': { overall: 116000 },
   'textron-systems': { overall: 93500 },
   'palantir-technologies': { overall: 252000 },
+  mitre: { tc: L(105.9, 120.5, 135.5, 168.7, 213.2) },
+  viasat: { tc: L(132.9, 157.4, 175.6, 248.2, 280) },
+  'torch-technologies': { overall: 145000 },
+  peopletec: { overall: 130000 },
+  'radiance-technologies': { overall: 90390 },
+  arcfield: { overall: 90000 },
+  draper: { overall: 130000 },
+  'the-aerospace-corporation': { overall: 100000 },
+  battelle: { overall: 95000 },
+  noblis: { overall: 100000 },
+  'asrc-federal': { overall: 82000 },
+  'aerovironment-av': { overall: 159000 },
+  'leonardo-drs': { overall: 90000 },
+  astrion: { overall: 93000 },
+  'parry-labs': { overall: 130000 },
+  'qinetiq-us': { overall: 95000 },
+  'scientific-research-corporation': { overall: 93000 },
+  'american-systems': { overall: 87000 },
+  'sierra-nevada-company': { overall: 120000 },
+  'systems-planning-analysis-spa': { overall: 112000 },
+  'applied-research-associates-ara': { overall: 85000 },
+  'elbit-systems-of-america': { overall: 113667 },
+  // US median; its example package is a Washington, DC L5.
+  lmi: { overall: 180000, level: 4 },
 };
 
 // Expected multipliers the generator applies on top of base, so a TC target can be turned
@@ -148,8 +201,8 @@ function calibrated(slug, cfg) {
     const stock = cfg.stock && cal.tc.map((tc, lvl) => tc * (expectedStock(cfg, lvl) / modeledTc(cfg, lvl, cfg.base[lvl])) / 1.025);
     return { ...cfg, base, ...(stock ? { stock } : {}) };
   }
-  const mid = (modeledTc(cfg, 1, cfg.base[1]) + modeledTc(cfg, 2, cfg.base[2])) / 2;
-  const k = cal.overall / mid;
+  const anchor = cal.level != null ? modeledTc(cfg, cal.level, cfg.base[cal.level]) : (modeledTc(cfg, 1, cfg.base[1]) + modeledTc(cfg, 2, cfg.base[2])) / 2;
+  const k = cal.overall / anchor;
   return { ...cfg, base: cfg.base.map((b) => b * k), ...(cfg.stock ? { stock: cfg.stock.map((x) => x * k) } : {}) };
 }
 
@@ -158,6 +211,9 @@ const CLEARANCE_PREMIUM = { none: 1, 'Public Trust': 1.01, Secret: 1.04, 'Top Se
 
 const YOE = [[0, 2], [2, 5], [5, 9], [9, 14], [14, 22]];
 const LEVEL_WEIGHTS = [0.27, 0.3, 0.24, 0.13, 0.06];
+// With only ten rows, random levels can land far from the calibration target, so mid-size firms
+// use a fixed mix instead.
+const LEVEL_SPREAD = [1, 2, 0, 1, 2, 3, 1, 2, 4, 0];
 // People-management rungs (Accenture's "Manager", CGI's "Director") are left out for now;
 // estimates only cover individual-contributor engineering levels.
 const isManagerRung = (name) => /manager|director/i.test(name);
@@ -201,7 +257,7 @@ export function buildEstimates(now = new Date()) {
 
     for (let i = 0; i < cfg.n; i++) {
       const title = cfg.roles[i % cfg.roles.length];
-      let lvl = Number(pickWeighted(rand, Object.fromEntries(LEVEL_WEIGHTS.map((w, j) => [j, w]))));
+      let lvl = cfg.spread ? LEVEL_SPREAD[i % LEVEL_SPREAD.length] : Number(pickWeighted(rand, Object.fromEntries(LEVEL_WEIGHTS.map((w, j) => [j, w]))));
       while (lvl > 0 && isManagerRung(cfg.ladder[lvl])) lvl--;
       const factor = ROLE_FACTORS[title] ?? 0.95;
       const clearance = pickWeighted(rand, cfg.clear);
