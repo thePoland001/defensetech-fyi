@@ -7,6 +7,9 @@ services:
     name: defensetech-fyi
     runtime: node
     plan: free
+    # Keep this next to the database: create the Neon project in AWS us-east-2 (Ohio).
+    # Render can't move a service to another region after it's created.
+    region: ohio
     buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /api/health

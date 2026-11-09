@@ -32,7 +32,7 @@ Production uses a regular Postgres database through `DATABASE_URL`. Locally, wit
 
 **Recommended host: [Neon](https://neon.tech) (free tier).** Render's own free Postgres is deleted after 30 days, and the free web service's disk is wiped on every deploy. Neon's free plan doesn't expire and has room for far more salaries than this site will collect. To set it up:
 
-1. Create a Neon project.
+1. Create a Neon project in **AWS us-east-2 (Ohio)**, the same region `render.yaml` puts the web service in. Every page load makes several database round trips, so keeping them close matters.
 2. Copy the connection string (`postgresql://…neon.tech/…?sslmode=require`).
 3. Paste it as `DATABASE_URL` in Render.
 

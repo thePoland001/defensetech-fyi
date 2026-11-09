@@ -194,6 +194,12 @@ async function migrate() {
 // ------------------------------------------------------------------------------- seed data
 
 async function seedCompanies() {
+  // The directory is ~300 rows, one round trip each. Render's free plan wakes from sleep on
+  // a visitor's request, so skip the upserts when the directory hasn't changed since last boot.
+  const hash = crypto.createHash('sha256').update(JSON.stringify(COMPANY_ROWS)).digest('base64url');
+  const { rows } = await query(`SELECT value FROM meta WHERE key='companies_hash'`);
+  if (rows[0]?.value === hash) return;
+
   for (const [name, size, tags, area, hq, description, domain] of COMPANY_ROWS) {
     await query(
       `INSERT INTO companies (slug, name, size, tags, area, hq, description, domain)
@@ -202,6 +208,11 @@ async function seedCompanies() {
       [slugify(name), name, size, tags, area, Boolean(hq), description, domain || ''],
     );
   }
+  await query(
+    `INSERT INTO meta (key, value) VALUES ('companies_hash', $1) ON CONFLICT (key) DO UPDATE SET value=$1`,
+    [hash],
+  );
+  console.log(`[db] synced ${COMPANY_ROWS.length} directory companies`);
 }
 
 async function seedEstimates() {
